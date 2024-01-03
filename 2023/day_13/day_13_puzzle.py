@@ -52,7 +52,7 @@ def find_mirrors_in_pattern(pattern: list) -> tuple:
     return answer, potential_smudges
 
 
-def is_mirror_row(r1, r2, pattern: list, potential_smudges) -> bool:
+def is_mirror_row(r1, r2, pattern: list, potential_smudges: list) -> bool:
     rows = len(pattern)
     cols = len(pattern[0])
     is_mirror = True
