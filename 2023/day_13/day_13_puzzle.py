@@ -4,7 +4,7 @@ def solution(input_file: str) -> None:
     print(f"Answer P2 using '{input_file}' :", final_res[1])
 
 
-def solution_helper(input_file: str):
+def solution_helper(input_file: str) -> tuple:
     input = []
     curr_pattern = []
     with open(input_file, "r") as f:
@@ -17,7 +17,7 @@ def solution_helper(input_file: str):
     input.append(curr_pattern)
     return find_mirrors(input)
 
-def find_mirrors(input: list):
+def find_mirrors(input: list) -> tuple:
     answer = 0
     answer_2 = 0
     for pattern in input:
@@ -29,7 +29,7 @@ def find_mirrors(input: list):
     return answer, answer_2
 
 
-def find_mirrors_in_pattern(pattern: list):
+def find_mirrors_in_pattern(pattern: list) -> tuple:
     rows = len(pattern)
     cols = len(pattern[0])
     mirrors = []
@@ -52,7 +52,7 @@ def find_mirrors_in_pattern(pattern: list):
     return answer, potential_smudges
 
 
-def is_mirror_row(r1, r2, pattern: list, potential_smudges):
+def is_mirror_row(r1, r2, pattern: list, potential_smudges) -> bool:
     rows = len(pattern)
     cols = len(pattern[0])
     is_mirror = True
@@ -71,7 +71,7 @@ def is_mirror_row(r1, r2, pattern: list, potential_smudges):
     return is_mirror
 
 
-def is_mirror_col(c1, c2, pattern: list, potential_smudges: list):
+def is_mirror_col(c1, c2, pattern: list, potential_smudges: list) -> bool:
     cols = len(pattern[0])
     rows = len(pattern)
     curr_faults = []
