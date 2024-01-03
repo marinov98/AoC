@@ -1,6 +1,10 @@
 def solution(input_file: str) -> None:
-    print(f"Answer to the first problem using file '{input_file}' is: {solution_helper(input_file)}")
-    print(f"Answer to the second problem using file '{input_file}' is: {solution_helper(input_file, True)}")
+    print(
+        f"Answer to the first problem using file '{input_file}' is: {solution_helper(input_file)}"
+    )
+    print(
+        f"Answer to the second problem using file '{input_file}' is: {solution_helper(input_file, True)}"
+    )
 
 
 def solution_helper(input_file: str, alt: bool = False) -> int:
@@ -13,7 +17,7 @@ def solution_helper(input_file: str, alt: bool = False) -> int:
             if alt:
                 spring_cfg = "?".join([spring_cfg] * 5)
                 formatted_springs *= 5
-                
+
             total += get_count(spring_cfg, formatted_springs, {})
     return total
 
@@ -34,8 +38,14 @@ def get_count(spring_cfg, spring_nums, cache: dict) -> int:
         result += get_count(spring_cfg[1:], spring_nums, cache)
 
     if spring_cfg[0] == "#" or spring_cfg[0] == "?":
-        if (spring_nums[0] <= len(spring_cfg)) and ("." not in spring_cfg[:spring_nums[0]]) and (spring_nums[0] == len(spring_cfg) or spring_cfg[spring_nums[0]] != "#"):
-            result += get_count(spring_cfg[spring_nums[0] + 1:], spring_nums[1:], cache)
+        if (
+            (spring_nums[0] <= len(spring_cfg))
+            and ("." not in spring_cfg[: spring_nums[0]])
+            and (spring_nums[0] == len(spring_cfg) or spring_cfg[spring_nums[0]] != "#")
+        ):
+            result += get_count(
+                spring_cfg[spring_nums[0] + 1 :], spring_nums[1:], cache
+            )
 
     cache[key] = result
     return result
