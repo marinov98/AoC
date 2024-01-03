@@ -17,6 +17,7 @@ def solution_helper(input_file: str) -> tuple:
     input.append(curr_pattern)
     return find_mirrors(input)
 
+
 def find_mirrors(input: list) -> tuple:
     answer = 0
     answer_2 = 0
@@ -47,7 +48,6 @@ def find_mirrors_in_pattern(pattern: list) -> tuple:
         if is_mirror_row(i, i + 1, pattern, potential_smudges):
             mirrors.append((i + 1, i + 2, "r"))  # match numbers with problem
             answer += (i + 1) * 100
-
 
     return answer, potential_smudges
 
