@@ -18,7 +18,10 @@ def handle_sequence(sequence: list) -> tuple:
     tracker = [[] for _ in range(256)]
     focal_len_tracker = {}
     for curr_str in sequence:
+        # part 1
         total += run_hash_alg(curr_str)
+
+    # part 2
         run_hashmap_alg(curr_str, tracker, focal_len_tracker)
 
     total_2 = calculate_focusing_power(tracker, focal_len_tracker)
@@ -37,7 +40,7 @@ def run_hash_alg(string: str) -> int:
     return value
 
 
-def run_hashmap_alg(string: str, tracker, focal_len_tracker):
+def run_hashmap_alg(string: str, tracker: list, focal_len_tracker: dict) -> None:
     operation_type = 0  # 0 for - 1 for =
     key_to_check = None
     focal_len = -1
@@ -62,7 +65,7 @@ def run_hashmap_alg(string: str, tracker, focal_len_tracker):
             del focal_len_tracker[id]
 
 
-def calculate_focusing_power(tracker, focal_len_tracker):
+def calculate_focusing_power(tracker: list, focal_len_tracker: dict) -> int:
     total = 0
     for i, box in enumerate(tracker):
         for j, key_to_check in enumerate(box):

@@ -19,7 +19,7 @@ def solution_helper(input_file: str):
     )
 
 
-def push_rocks(grid: list):
+def push_rocks(grid: list) -> int:
     rows = len(grid)
     cols = len(grid[0])
     total_load = 0
@@ -34,7 +34,7 @@ def push_rocks(grid: list):
     return total_load
 
 
-def tilt_north(grid: list):
+def tilt_north(grid: list) -> int:
     rows = len(grid)
     cols = len(grid[0])
     total_load = 0
@@ -48,7 +48,7 @@ def tilt_north(grid: list):
     return total_load
 
 
-def tilt_south(grid: list):
+def tilt_south(grid: list) -> int:
     rows = len(grid)
     cols = len(grid[0])
     total_load = 0
@@ -62,7 +62,7 @@ def tilt_south(grid: list):
     return total_load
 
 
-def tilt_west(grid: list):
+def tilt_west(grid: list) -> int:
     rows = len(grid)
     cols = len(grid[0])
     total_load = 0
@@ -90,7 +90,7 @@ def tilt_east(grid: list):
     return total_load
 
 
-def cycle_rocks(grid: list, cycles=10):
+def cycle_rocks(grid: list, cycles=10) -> int:
     # print("Initial Grid:")
     # print_grid(grid)
     tracker = {}
@@ -112,7 +112,7 @@ def cycle_rocks(grid: list, cycles=10):
     # print(tracker)
 
 
-def push_rock_vertical(grid: list, r, c, invert: bool = False):
+def push_rock_vertical(grid: list, r, c, invert: bool = False) -> int:
     # slide rock as far up north as possible
     curr_row = r - 1 if not invert else r + 1
     limit = -1 if not invert else len(grid)
@@ -128,7 +128,7 @@ def push_rock_vertical(grid: list, r, c, invert: bool = False):
     return curr_row
 
 
-def push_rock_horizontal(grid: list, r, c, invert: bool = False):
+def push_rock_horizontal(grid: list, r, c, invert: bool = False) -> int:
     curr_col = c - 1 if not invert else c + 1
     limit = -1 if not invert else len(grid[0])
     offset = -1 if not invert else 1
