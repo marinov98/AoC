@@ -1,6 +1,6 @@
 def solution(input_file: str) -> None:
     answers = solution_helper(input_file)
-    # print(f"Solution P1 using '{input_file}': {answers[0]}")
+    print(f"Solution P1 using '{input_file}': {answers[0]}")
     print(f"Solution P2 using '{input_file}': {answers[1]}")
 
 
@@ -73,6 +73,6 @@ def calculate_focusing_power(tracker, focal_len_tracker):
 
 
 if __name__ == "__main__":
-    # solution("test.txt")
+    solution("test.txt")
     solution("day_15_puzzle_input.txt")
     # print(run_hash_alg("rn"))

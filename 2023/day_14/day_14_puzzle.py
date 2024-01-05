@@ -143,5 +143,5 @@ def push_rock_horizontal(grid: list, r, c, invert: bool = False):
 
 
 if __name__ == "__main__":
-    # solution("test.txt")
+    solution("test.txt")
     solution("day_14_puzzle_input.txt")
