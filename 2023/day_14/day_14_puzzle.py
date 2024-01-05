@@ -19,6 +19,35 @@ def solution_helper(input_file: str):
     )
 
 
+def push_rock_vertical(grid: list, r, c, invert: bool = False) -> int:
+    # slide rock as far up north as possible
+    curr_row = r - 1 if not invert else r + 1
+    limit = -1 if not invert else len(grid)
+    offset = -1 if not invert else 1
+    while curr_row != limit and grid[curr_row][c] not in "O#":
+        curr_row += offset
+    curr_row += offset * -1
+
+    # perform push (only if we moved of course)
+    if curr_row != r:
+        grid[curr_row][c] = "O"
+        grid[r][c] = "."
+    return curr_row
+
+def push_rock_horizontal(grid: list, r, c, invert: bool = False) -> int:
+    curr_col = c - 1 if not invert else c + 1
+    limit = -1 if not invert else len(grid[0])
+    offset = -1 if not invert else 1
+    while curr_col != limit and grid[r][curr_col] not in "O#":
+        curr_col += offset
+
+    curr_col += offset * -1
+    if curr_col != c:
+        grid[r][curr_col] = "O"
+        grid[r][c] = "."
+    return curr_col
+
+
 def push_rocks(grid: list) -> int:
     rows = len(grid)
     cols = len(grid[0])
@@ -123,34 +152,6 @@ def get_load(grid):
     return total
 
 
-def push_rock_vertical(grid: list, r, c, invert: bool = False) -> int:
-    # slide rock as far up north as possible
-    curr_row = r - 1 if not invert else r + 1
-    limit = -1 if not invert else len(grid)
-    offset = -1 if not invert else 1
-    while curr_row != limit and grid[curr_row][c] not in "O#":
-        curr_row += offset
-    curr_row += offset * -1
-
-    # perform push (only if we moved of course)
-    if curr_row != r:
-        grid[curr_row][c] = "O"
-        grid[r][c] = "."
-    return curr_row
-
-
-def push_rock_horizontal(grid: list, r, c, invert: bool = False) -> int:
-    curr_col = c - 1 if not invert else c + 1
-    limit = -1 if not invert else len(grid[0])
-    offset = -1 if not invert else 1
-    while curr_col != limit and grid[r][curr_col] not in "O#":
-        curr_col += offset
-
-    curr_col += offset * -1
-    if curr_col != c:
-        grid[r][curr_col] = "O"
-        grid[r][c] = "."
-    return curr_col
 
 
 if __name__ == "__main__":
