@@ -15,7 +15,7 @@ def solution_helper(input_file: str):
         for line in file:
             grid.append(list(line.strip()))
     return push_rocks([row[:] for row in grid]), cycle_rocks(
-        [row[:] for row in grid], 1000
+        [row[:] for row in grid], 1000000000
     )
 
 
@@ -90,26 +90,37 @@ def tilt_east(grid: list):
     return total_load
 
 
-def cycle_rocks(grid: list, cycles=10) -> int:
-    # print("Initial Grid:")
-    # print_grid(grid)
-    tracker = {}
+def cycle_rocks(grid: list, total_cycles=10) -> int:
+    grid_to_insert = tuple([tuple(row[:]) for row in grid])
+    grid_tracker = {grid_to_insert}
+    grids = [grid_to_insert]
+    cycles = 0
+    while True:
+        cycles += 1
+        tilt_north(grid)
+        tilt_west(grid)
+        tilt_south(grid)
+        tilt_east(grid)
+        grid_to_insert = tuple([tuple(row[:]) for row in grid])
+        if grid_to_insert in grid_tracker:
+            break
+        grid_tracker.add(grid_to_insert)
+        grids.append(grid_to_insert)
+
+    first = grids.index(grid_to_insert)
+    target_grid = grids[((total_cycles - first) % (cycles - first)) + first]
+    answer = get_load(target_grid)
+
+    return answer
+
+def get_load(grid):
     total = 0
-    for _ in range(cycles):
-        total = tilt_north(grid)
-        tracker[total] = tracker.get(total, 0) + 1
-        total = tilt_west(grid)
-        tracker[total] = tracker.get(total, 0) + 1
-        total = tilt_south(grid)
-        tracker[total] = tracker.get(total, 0) + 1
-        total = tilt_east(grid)
-        tracker[total] = tracker.get(total, 0) + 1
-        # print("\n Cycle:", cycle + 1)
-        # print("Last total after cycle", total)
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == "O":
+                total += len(grid) - i
+
     return total
-    # print_grid(grid)
-    # print(f"Found {len(tracker)} unique totals after {cycles}")
-    # print(tracker)
 
 
 def push_rock_vertical(grid: list, r, c, invert: bool = False) -> int:
