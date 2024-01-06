@@ -5,7 +5,6 @@ def find_min_heat_loss_path(block: list, heat_limit: int = 3):
     visited = set()
     rows = len(block)
     cols = len(block[0])
-    min_heat_loss = 0
     pq = [
         (  # direction, row, column, heat counter, current heat loss
             int(0),
@@ -56,9 +55,10 @@ def find_min_heat_loss_path(block: list, heat_limit: int = 3):
                     heat_counter + 1 if n_d == d else 1
                 )  # reset if changing direction
                 n_curr_heat_loss = curr_heat_loss + block[n_r][n_c]
-                heappush(pq, (n_curr_heat_loss, n_r, n_c, n_d, n_heat_counter))
+                if (n_d, n_r, n_c, n_heat_counter) not in visited:
+                    heappush(pq, (n_curr_heat_loss, n_r, n_c, n_d, n_heat_counter))
 
-    return min_heat_loss
+    return 0
 
 
 def solution_helper(input_file: str) -> tuple:
