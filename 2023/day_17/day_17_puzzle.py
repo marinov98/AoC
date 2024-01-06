@@ -1,7 +1,7 @@
 from heapq import heappush, heappop
 
 
-def find_min_heat_loss_path(block: list, heat_limit: int = 3):
+def find_min_heat_loss_path(block: list, heat_limit: int = 3) -> int:
     visited = set()
     rows = len(block)
     cols = len(block[0])
