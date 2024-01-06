@@ -1,16 +1,24 @@
-def find_energized_tiles(grid: list) -> int:
+def find_energized_tiles(grid: list, alt = False) -> int:
     rows = len(grid)
     cols = len(grid[0])
-    starts = [
-        (str("r"), int(0), int(0)),
-        (str("r"), rows - 1, int(0)),
-        (str("d"), int(0), int(0)),
-        (str("d"), int(0), cols - 1),
-        (str("u"), rows - 1, int(0)),
-        (str("u"), rows - 1, cols - 1),
-        (str("l"), rows - 1, cols - 1),
-        (str("l"), int(0), cols - 1),
-    ]
+    if alt: # part 2
+        starts = []
+        for i in range(rows):
+            starts.append((str("r"), i, int(0)))
+            starts.append((str("l"), i, cols - 1))
+            if i == 0:
+                starts.append((str("d"), i, int(0)))
+                starts.append((str("d"), i, cols - 1))
+            elif i == rows - 1:
+                starts.append((str("u"), i, int(0)))
+                starts.append((str("u"), i, cols - 1))
+
+        for j in range(1, cols - 1):
+            starts.append((str("d"), int(0), j))
+            starts.append((str("u"), rows - 1, j))
+    else: # part 1
+        starts = [(str("r"), int(0), int(0))]
+
     max_tiles = 0
     while len(starts) != 0:
         beams = [starts.pop()]
@@ -20,7 +28,6 @@ def find_energized_tiles(grid: list) -> int:
         while len(beams) != 0:
             d, r, c = beams.pop()
             while -1 < r < rows and -1 < c < cols and (d, r, c) not in visited:
-                # print(f"row: {r} col: {c} elem: {grid[r][c]} beams: {beams}")
                 visited.add((d, r, c))
                 if (r, c) not in tile_tracker:
                     energized_tiles += 1
@@ -63,7 +70,6 @@ def find_energized_tiles(grid: list) -> int:
                     r += 1
                 elif d == "u":
                     r -= 1
-        print(energized_tiles)
         max_tiles = max(max_tiles, energized_tiles)
 
     return max_tiles
@@ -75,8 +81,8 @@ def solution_helper(input_file: str) -> tuple:
         for line in file:
             grid.append(list(line.strip()))
 
-    # part 1
-    return find_energized_tiles(grid), 0
+    # part 1                            # part 2
+    return find_energized_tiles(grid), find_energized_tiles(grid, True)
 
 
 def print_grid(grid: list) -> None:
@@ -87,9 +93,9 @@ def print_grid(grid: list) -> None:
 def solution(input_file: str) -> None:
     answers = solution_helper(input_file)
     print(f"Solution P1 using '{input_file}': {answers[0]}")
-    # print(f"Solution P2 using '{input_file}': {answers[1]}")
+    print(f"Solution P2 using '{input_file}': {answers[1]}")
 
 
 if __name__ == "__main__":
     solution("test.txt")
-    # solution("day_16_puzzle_input.txt")
+    solution("day_16_puzzle_input.txt")
