@@ -1,7 +1,9 @@
 from heapq import heappush, heappop
 
 
-def find_min_heat_loss_path(block: list, heat_limit: int = 3) -> int:
+def find_min_heat_loss_path_ultra(
+    block: list, heat_limit: int = 10, min_heat_limit: int = 4
+) -> int:
     visited = set()
     rows = len(block)
     cols = len(block[0])
@@ -18,7 +20,7 @@ def find_min_heat_loss_path(block: list, heat_limit: int = 3) -> int:
     while pq:
         curr_heat_loss, r, c, d, heat_counter = heappop(pq)
 
-        if r == rows - 1 and c == cols - 1:
+        if r == rows - 1 and c == cols - 1 and heat_counter > min_heat_limit - 1:
             return curr_heat_loss
 
         if (d, r, c, heat_counter) in visited:
@@ -26,9 +28,8 @@ def find_min_heat_loss_path(block: list, heat_limit: int = 3) -> int:
 
         visited.add((d, r, c, heat_counter))
 
-
-        possible_moves = []
-        if heat_counter < heat_limit:
+        possible_moves = [d]
+        if heat_counter > min_heat_limit - 1 and heat_counter < heat_limit:
             if d == "s":
                 possible_moves = ["s", "u", "d"]
             elif d == "u":
@@ -37,7 +38,7 @@ def find_min_heat_loss_path(block: list, heat_limit: int = 3) -> int:
                 possible_moves = ["d", "s", "r"]
             elif d == "r":
                 possible_moves = ["r", "u", "d"]
-        else:
+        elif heat_counter > heat_limit - 1:
             # must rotate 90 degrees
             if d == "s":
                 possible_moves = ["d", "u"]
@@ -66,7 +67,9 @@ def solution_helper(input_file: str) -> tuple:
     with open(input_file, "r") as file:
         for line in file:
             block.append(list(map(int, list(line.strip()))))
-    return find_min_heat_loss_path(block), 0
+    return find_min_heat_loss_path_ultra(block, 3, 0), find_min_heat_loss_path_ultra(
+        block, 10, 4
+    )
 
 
 def print_grid(grid: list) -> None:
@@ -82,9 +85,4 @@ def solution(files: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    solution(
-        [
-            "test.txt",
-            "day_17_puzzle_input.txt"
-        ]
-    )
+    solution(["test.txt", "test_2.txt", "day_17_puzzle_input.txt"])
