@@ -85,10 +85,4 @@ def solution(files: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    solution(
-        [
-            "test.txt",
-            "test_2.txt",
-            "day_17_puzzle_input.txt"
-        ]
-    )
+    solution(["test.txt", "test_2.txt", "day_17_puzzle_input.txt"])

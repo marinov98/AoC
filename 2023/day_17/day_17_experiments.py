@@ -1,18 +1,36 @@
 from queue import Queue, PriorityQueue
+from math import sqrt
+
 
 class BlockState:
-    def __init__(self, direction: str, row: int, col: int, heat_counter: int, total_heat_loss: int, target_row: int, target_col: int, target_heat_loss: int):
-        self.d = direction 
+    def __init__(
+        self,
+        direction: str,
+        row: int,
+        col: int,
+        heat_counter: int,
+        total_heat_loss: int,
+        target_row: int,
+        target_col: int,
+    ):
+        self.d = direction
         self.r = row
         self.c = col
         self.heat_counter = heat_counter
         self.total_heat_loss = total_heat_loss
         self.target_row = target_row
         self.target_col = target_col
-        self.target_heat_loss = target_heat_loss
 
-    def heuristic(self) -> int:
-        return (self.total_heat_loss + (abs(self.target_row - self.r) + abs(self.target_col - self.c)) * self.target_heat_loss)
+    # Manhattan Distance
+    def Manhattan(self) -> int:
+        return abs(self.r - self.target_row) + abs(self.c - self.target_col)
+
+    # Euclidean Distance
+    def Euclidean(self):
+        return sqrt((self.r - self.target_row) ** 2 + (self.c - self.target_col) ** 2)
+
+    def heuristic(self):
+        return self.total_heat_loss + self.Euclidean()
 
     def __eq__(self, other):
         return self.heuristic() == other.heuristic()
@@ -25,7 +43,7 @@ class BlockState:
 
     def get_properties(self) -> tuple:
         return self.total_heat_loss, self.r, self.c, self.d, self.heat_counter
-        
+
 
 def find_min_heat_loss_path_pq(
     block: list, heat_limit: int = 10, min_heat_limit: int = 4
@@ -34,7 +52,7 @@ def find_min_heat_loss_path_pq(
     rows = len(block)
     cols = len(block[0])
     pq = PriorityQueue()
-    pq.put(BlockState("s", int(0), int(0), int(0), int(0), rows - 1, cols - 1, block[rows - 1][cols - 1]))
+    pq.put(BlockState("s", int(0), int(0), int(0), int(0), rows - 1, cols - 1))
     dirs = {"s": (0, 1), "d": (1, 0), "u": (-1, 0), "r": (0, -1)}
     while pq:
         curr_heat_loss, r, c, d, heat_counter = pq.get().get_properties()
@@ -76,7 +94,17 @@ def find_min_heat_loss_path_pq(
                 )  # reset if changing direction
                 n_curr_heat_loss = curr_heat_loss + block[n_r][n_c]
                 if (n_d, n_r, n_c, n_heat_counter) not in visited:
-                    pq.put(BlockState(n_d, n_r, n_c, n_heat_counter, n_curr_heat_loss, rows - 1, cols - 1, block[rows - 1][cols - 1]))
+                    pq.put(
+                        BlockState(
+                            n_d,
+                            n_r,
+                            n_c,
+                            n_heat_counter,
+                            n_curr_heat_loss,
+                            rows - 1,
+                            cols - 1,
+                        )
+                    )
 
     return 0
 
@@ -140,7 +168,6 @@ def find_min_heat_loss_path_dfs(block: list, heat_limit: int = 3):
                     stack.append((n_d, n_r, n_c, n_heat_counter, n_curr_heat_loss))
 
     return min_heat_loss
-
 
 
 def find_min_heat_loss_path_bfs(block: list, heat_limit: int = 3):
