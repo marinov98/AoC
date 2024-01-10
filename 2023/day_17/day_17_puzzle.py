@@ -1,6 +1,5 @@
 from heapq import heappush, heappop
 
-
 def find_min_heat_loss_path_ultra(
     block: list, heat_limit: int = 10, min_heat_limit: int = 4
 ) -> int:
