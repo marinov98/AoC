@@ -1,16 +1,90 @@
-def passes_rule(rule: str, parts: dict):
-    if "<" in rule:
-        var, num_to_compare = rule.split("<")
+def get_combinations_for_condition(
+    condition: str,
+) -> tuple:  # first : if rule accepted range, second: if rule not accepted range
+    if "<" in condition:
+        var, num_to_compare = condition.split("<")
+        num_to_compare = int(num_to_compare)
+        return (
+            var,
+            (1, num_to_compare - 1),
+            (num_to_compare + 1, 4000),
+        )  # a < 2006 -> 1 .. 2005 -> 2006 - 1 , a > 2006 -> 2007 ... 4000
+    if ">" in condition:
+        var, num_to_compare = condition.split(">")
+        num_to_compare = int(num_to_compare)
+        return (var, (num_to_compare + 1, 4000), (1, num_to_compare - 1))
+    return "z", (0, 0), (0, 0)
+
+
+def get_product(part_dict: dict):
+    product = 1
+    for lo, hi in part_dict.values():
+        product *= (hi - lo + 1)
+
+    return product
+
+
+def get_accepted_parts_advanced(workflows: dict):
+    combinations = 0
+    stack = [
+        ("in", int(0), {"x": (1, 4000), "m": (1, 4000), "a": (1, 4000), "s": (1, 4000)})
+    ]  # curr_workflow, combinations_so_far, rule_idx x_range, m_range, a_range, s_range
+    while stack:
+        curr_workflow, rule_idx, parts_dict = stack.pop()
+        copy_dict = dict(parts_dict)
+        rule = workflows[curr_workflow][rule_idx]
+        # print(f"curr part: {part_dict} curr workflow: {curr_worklow}")
+        if ":" in rule:
+            condition, post = rule.split(":")
+            (
+                var,
+                combination_range_if_passed,
+                combination_range_if_failed,
+            ) = get_combinations_for_condition(condition)
+            if post in "RA":
+                if post == "A":
+                    copy_dict[var] = combination_range_if_passed
+                    combinations += get_product(copy_dict)
+                if rule_idx != len(workflows[curr_workflow]) - 1:
+                    if (combination_range_if_failed[0] <= combination_range_if_failed[1]):
+                        copy_dict[var] = combination_range_if_failed
+                        stack.append((curr_workflow, rule_idx + 1, copy_dict))
+            else:
+                (
+                    var,
+                    combination_range_if_passed,
+                    combination_range_if_failed,
+                ) = get_combinations_for_condition(condition)
+
+                if (combination_range_if_passed[0] <= combination_range_if_passed[1]):
+                    copy_dict[var] = combination_range_if_passed
+                    stack.append((post, 0, copy_dict))
+                if (combination_range_if_failed[0] <= combination_range_if_failed[1]):
+                    copy_dict[var] = combination_range_if_failed
+                    stack.append((curr_workflow, rule_idx + 1, copy_dict))
+        else:
+            if rule in "RA":
+                if rule == "A":
+                    combinations += get_product(copy_dict)
+            else:
+                stack.append((rule, 0, copy_dict))
+
+    return combinations
+
+
+def passes_condition(condition: str, parts: dict):
+    if "<" in condition:
+        var, num_to_compare = condition.split("<")
         return parts[var] < int(num_to_compare)
-    if ">" in rule:
-        var, num_to_compare = rule.split(">")
+    if ">" in condition:
+        var, num_to_compare = condition.split(">")
         return parts[var] > int(num_to_compare)
 
 
 def get_accepted_parts(workflows: dict, parts: list[list]):
     total = 0
     for part_arr in parts:
-        curr_worklow = "in"
+        curr_workflow = "in"
         part_dict = {
             "x": int(part_arr[0].split("=")[1]),
             "m": int(part_arr[1].split("=")[1]),
@@ -19,12 +93,12 @@ def get_accepted_parts(workflows: dict, parts: list[list]):
         }
 
         rule_idx = 0
-        while rule_idx != len(workflows[curr_worklow]):
-            rule = workflows[curr_worklow][rule_idx]
+        while rule_idx != len(workflows[curr_workflow]):
+            rule = workflows[curr_workflow][rule_idx]
             # print(f"curr part: {part_dict} curr workflow: {curr_worklow}")
             if ":" in rule:
-                rule, post = rule.split(":")
-                if passes_rule(rule, part_dict):
+                condition, post = rule.split(":")
+                if passes_condition(condition, part_dict):
                     if post in "AR":
                         if post == "A":
                             total += (
@@ -35,7 +109,7 @@ def get_accepted_parts(workflows: dict, parts: list[list]):
                             )
                         break
                     else:
-                        curr_worklow = post
+                        curr_workflow = post
                         rule_idx = 0
                 else:
                     rule_idx += 1
@@ -51,7 +125,7 @@ def get_accepted_parts(workflows: dict, parts: list[list]):
                         )
                     break
                 else:
-                    curr_worklow = rule
+                    curr_workflow = rule
                     rule_idx = 0
 
     return total
@@ -69,7 +143,7 @@ def solution_helper(input_file: str) -> tuple:
             elif line and line[0] == "{":
                 parts.append(line[1:-1].split(","))
 
-    return get_accepted_parts(workflows, parts), 0
+    return get_accepted_parts(workflows, parts), get_accepted_parts_advanced(workflows)
 
 
 def solution(inputs: list[str]):
@@ -83,6 +157,6 @@ if __name__ == "__main__":
     solution(
         [
             "test.txt",
-            "day_19_puzzle_input.txt"
+            # "day_19_puzzle_input.txt"
         ]
     )
