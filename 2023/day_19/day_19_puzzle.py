@@ -53,6 +53,7 @@ def get_accepted_parts_advanced(workflows: dict):
                     if combination_range_if_failed[0] <= combination_range_if_failed[1]:
                         copy_dict = dict(parts_dict)
                         copy_dict[var] = combination_range_if_failed
+                        parts_dict = copy_dict
                 else:  # fallback
                     stack.append((rule_or_fallback, parts_dict))
 
@@ -144,6 +145,6 @@ if __name__ == "__main__":
     solution(
         [
             "test.txt",
-            # "day_19_puzzle_input.txt"
+            "day_19_puzzle_input.txt"
         ]
     )
