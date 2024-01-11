@@ -51,9 +51,7 @@ def get_accepted_parts_advanced(workflows: dict):
                         copy_dict[var] = combination_range_if_passed
                         stack.append((post, copy_dict))
                     if combination_range_if_failed[0] <= combination_range_if_failed[1]:
-                        copy_dict = dict(parts_dict)
-                        copy_dict[var] = combination_range_if_failed
-                        parts_dict = copy_dict
+                        parts_dict[var] = combination_range_if_failed
                 else:  # fallback
                     stack.append((rule_or_fallback, parts_dict))
 
