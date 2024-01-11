@@ -1,4 +1,4 @@
-def get_combinations_for_condition(
+def get_ranges_for_condition(
     condition: str,
 ) -> tuple:  # first : if rule accepted range, second: if rule not accepted range
     if "<" in condition:
@@ -7,19 +7,19 @@ def get_combinations_for_condition(
         return (
             var,
             (1, num_to_compare - 1),
-            (num_to_compare + 1, 4000),
+            (num_to_compare, 4000),
         )  # a < 2006 -> 1 .. 2005 -> 2006 - 1 , a > 2006 -> 2007 ... 4000
     if ">" in condition:
         var, num_to_compare = condition.split(">")
         num_to_compare = int(num_to_compare)
-        return (var, (num_to_compare + 1, 4000), (1, num_to_compare - 1))
+        return (var, (num_to_compare + 1, 4000), (1, num_to_compare))
     return "z", (0, 0), (0, 0)
 
 
 def get_product(part_dict: dict):
     product = 1
     for lo, hi in part_dict.values():
-        product *= (hi - lo + 1)
+        product *= hi - lo + 1
 
     return product
 
@@ -31,7 +31,6 @@ def get_accepted_parts_advanced(workflows: dict):
     ]  # curr_workflow, combinations_so_far, rule_idx x_range, m_range, a_range, s_range
     while stack:
         curr_workflow, rule_idx, parts_dict = stack.pop()
-        copy_dict = dict(parts_dict)
         rule = workflows[curr_workflow][rule_idx]
         # print(f"curr part: {part_dict} curr workflow: {curr_worklow}")
         if ":" in rule:
@@ -40,34 +39,34 @@ def get_accepted_parts_advanced(workflows: dict):
                 var,
                 combination_range_if_passed,
                 combination_range_if_failed,
-            ) = get_combinations_for_condition(condition)
+            ) = get_ranges_for_condition(condition)
             if post in "RA":
                 if post == "A":
+                    copy_dict = dict(parts_dict)
                     copy_dict[var] = combination_range_if_passed
                     combinations += get_product(copy_dict)
-                if rule_idx != len(workflows[curr_workflow]) - 1:
-                    if (combination_range_if_failed[0] <= combination_range_if_failed[1]):
-                        copy_dict[var] = combination_range_if_failed
-                        stack.append((curr_workflow, rule_idx + 1, copy_dict))
             else:
                 (
                     var,
                     combination_range_if_passed,
                     combination_range_if_failed,
-                ) = get_combinations_for_condition(condition)
+                ) = get_ranges_for_condition(condition)
 
-                if (combination_range_if_passed[0] <= combination_range_if_passed[1]):
+                if combination_range_if_passed[0] <= combination_range_if_passed[1]:
+                    copy_dict = dict(parts_dict)
                     copy_dict[var] = combination_range_if_passed
                     stack.append((post, 0, copy_dict))
-                if (combination_range_if_failed[0] <= combination_range_if_failed[1]):
+                if combination_range_if_failed[0] <= combination_range_if_failed[1]:
+                    copy_dict = dict(parts_dict)
                     copy_dict[var] = combination_range_if_failed
                     stack.append((curr_workflow, rule_idx + 1, copy_dict))
         else:
             if rule in "RA":
                 if rule == "A":
-                    combinations += get_product(copy_dict)
+                    combinations += get_product(parts_dict)
             else:
-                stack.append((rule, 0, copy_dict))
+                copy_dict = dict(parts_dict)
+                stack.append((rule, 0, parts_dict))
 
     return combinations
 
