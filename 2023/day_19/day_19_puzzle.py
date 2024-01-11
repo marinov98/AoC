@@ -1,35 +1,61 @@
-def passes_rule(rule: str):
-    pass
+def passes_rule(rule: str, parts: dict):
+    if "<" in rule:
+        var, num_to_compare = rule.split("<")
+        return parts[var] < int(num_to_compare)
+    if ">" in rule:
+        var, num_to_compare = rule.split(">")
+        return parts[var] > int(num_to_compare)
 
 
 def get_accepted_parts(workflows: dict, parts: list[list]):
-    curr_worklow = "in"
     total = 0
     for part_arr in parts:
+        curr_worklow = "in"
         part_dict = {
-            "x": part_arr[0].split("=")[1],
-            "m": part_arr[1].split("=")[1],
-            "a": part_arr[2].split("=")[1],
-            "s": part_arr[3].split("=")[1],
+            "x": int(part_arr[0].split("=")[1]),
+            "m": int(part_arr[1].split("=")[1]),
+            "a": int(part_arr[2].split("=")[1]),
+            "s": int(part_arr[3].split("=")[1]),
         }
-
 
         rule_idx = 0
         while rule_idx != len(workflows[curr_worklow]):
             rule = workflows[curr_worklow][rule_idx]
+            # print(f"curr part: {part_dict} curr workflow: {curr_worklow}")
             if ":" in rule:
                 rule, post = rule.split(":")
-                print(post)
+                if passes_rule(rule, part_dict):
+                    if post in "AR":
+                        if post == "A":
+                            total += (
+                                part_dict["x"]
+                                + part_dict["m"]
+                                + part_dict["a"]
+                                + part_dict["s"]
+                            )
+                        break
+                    else:
+                        curr_worklow = post
+                        rule_idx = 0
+                else:
+                    rule_idx += 1
+
             else:
                 if rule in "AR":
                     if rule == "A":
-                        total += (part_dict["x"] + part_dict["m"] + part_dict["a"] + part_dict["s"])
-                        break
+                        total += (
+                            part_dict["x"]
+                            + part_dict["m"]
+                            + part_dict["a"]
+                            + part_dict["s"]
+                        )
+                    break
                 else:
                     curr_worklow = rule
-            rule_idx += 1
+                    rule_idx = 0
 
     return total
+
 
 def solution_helper(input_file: str) -> tuple:
     workflows = {}
@@ -57,6 +83,6 @@ if __name__ == "__main__":
     solution(
         [
             "test.txt",
-            # "day_19_puzzle_input.txt"
+            "day_19_puzzle_input.txt"
         ]
     )
