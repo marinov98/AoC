@@ -1,18 +1,20 @@
 def get_ranges_for_condition(
-    condition: str,
+    condition: str, parts_dict: dict
 ) -> tuple:  # first : if rule accepted range, second: if rule not accepted range
     if "<" in condition:
         var, num_to_compare = condition.split("<")
         num_to_compare = int(num_to_compare)
+        lo, hi = parts_dict[var]
         return (
             var,
-            (1, num_to_compare - 1),
-            (num_to_compare, 4000),
+            (lo, min(num_to_compare - 1, hi)),
+            (max(num_to_compare, lo), hi),
         )
     else:
         var, num_to_compare = condition.split(">")
         num_to_compare = int(num_to_compare)
-        return (var, (num_to_compare + 1, 4000), (1, num_to_compare))
+        lo, hi = parts_dict[var]
+        return (var, (max(num_to_compare + 1, lo), hi), (lo, min(num_to_compare, hi)))
 
 
 def get_product(parts_dict: dict):
@@ -35,14 +37,14 @@ def get_accepted_parts_advanced(workflows: dict):
         elif curr_workflow == "R":
             continue
         else:
-            for rule in workflows[curr_workflow]:
-                if ":" in rule: # actual rule
-                    condition, post = rule.split(":")
+            for rule_or_fallback in workflows[curr_workflow]:
+                if ":" in rule_or_fallback:  # actual rule
+                    condition, post = rule_or_fallback.split(":")
                     (
                         var,
                         combination_range_if_passed,
                         combination_range_if_failed,
-                    ) = get_ranges_for_condition(condition)
+                    ) = get_ranges_for_condition(condition, parts_dict)
 
                     if combination_range_if_passed[0] <= combination_range_if_passed[1]:
                         copy_dict = dict(parts_dict)
@@ -51,8 +53,8 @@ def get_accepted_parts_advanced(workflows: dict):
                     if combination_range_if_failed[0] <= combination_range_if_failed[1]:
                         copy_dict = dict(parts_dict)
                         copy_dict[var] = combination_range_if_failed
-                else: # fallback
-                    stack.append((rule, parts_dict))
+                else:  # fallback
+                    stack.append((rule_or_fallback, parts_dict))
 
     return combinations
 
