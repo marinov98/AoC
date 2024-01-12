@@ -28,7 +28,7 @@ def get_product(parts_dict: dict):
 def get_accepted_parts_advanced(workflows: dict):
     combinations = 0
     stack = [
-        ("in", {key: (1,4000) for key in "xmas"})
+        ("in", {key: (1, 4000) for key in "xmas"})
     ]  # curr_workflow, x_range, m_range, a_range, s_range
     while stack:
         curr_workflow, parts_dict = stack.pop()
@@ -140,9 +140,4 @@ def solution(inputs: list[str]):
 
 
 if __name__ == "__main__":
-    solution(
-        [
-            "test.txt",
-            "day_19_puzzle_input.txt"
-        ]
-    )
+    solution(["test.txt", "day_19_puzzle_input.txt"])
