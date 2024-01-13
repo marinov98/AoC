@@ -30,13 +30,13 @@ class CJ:
         self.outputs = outputs
         self.pulses = [0, 0]
 
-    def update_inputs(self, key: str):
+    def update_inputs(self, key: str) -> None:
         if key not in self.inputs:
             # by default l is the remembered pulse
             self.inputs[key] = "l"
             self.pulses[0] += 1
 
-    def update_and_send(self, pulse_type: str, key: str):
+    def update_and_send(self, pulse_type: str, key: str) -> str:
         if self.inputs[key] != pulse_type:
             self.inputs[key] = pulse_type
             if pulse_type == "l":
@@ -56,7 +56,7 @@ class CJ:
             return self.pulses[idx] == len(self.inputs)
         return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.id}: inputs={self.inputs}, outputs={self.outputs}, pulses={self.pulses}"
 
 
@@ -76,7 +76,7 @@ def is_original_state(flip_flops: dict[str, FF], conjuctions: dict[str, CJ]) -> 
 
 def handle_signals(
     broadcaster: list, flip_flops: dict[str, FF], conjuctions: dict[str, CJ]
-):
+) -> int:
     total_pulse = {"l": 0, "h": 0}
     cycles = 0
     q = Queue()
@@ -115,7 +115,7 @@ def handle_signals(
     return total_pulse["l"] * total_pulse["h"]
 
 
-def solution_helper(input_file: str):
+def solution_helper(input_file: str) -> int:
     broadcaster = []
     flip_flops = {}
     conjuctions = {}
@@ -148,8 +148,8 @@ def solution_helper(input_file: str):
 
 def solution(inputs: list[str]) -> None:
     for input_file in inputs:
-        answers = solution_helper(input_file)
-        print(answers)
+        answer = solution_helper(input_file)
+        print(f"Solution P1 using '{input_file}': {answer}")
 
 
 if __name__ == "__main__":
