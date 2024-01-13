@@ -1,4 +1,5 @@
 from queue import Queue
+from collections import deque
 
 
 def is_original_state(flip_flops: dict, conjuctions: dict) -> bool:
@@ -18,23 +19,23 @@ def is_original_state(flip_flops: dict, conjuctions: dict) -> bool:
 def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: dict):
     total_pulse = {"l": 0, "h": 0}
     cycles = 0
-    curr_level = Queue()
-    next_level = Queue()
+    dq = deque()
     for _ in range(1000):
         cycles += 1
         # low pulse from button module
         total_pulse["l"] += 1
-        print(f"button -l-> broadcaster")
+        # print(f"button -l-> broadcaster")
 
         for module in broadcaster:
             total_pulse["l"] += 1
-            curr_level.put((module, "l", "broadcaster"))
+            dq.append((module, "l", "broadcaster"))
 
-        while curr_level.qsize() > 0:
-            curr_module, pulse_type, parent_key = curr_level.get()
-            print(
-                 f"{parent_key} -{pulse_type}-> {curr_module}; "
-            )
+        while dq:
+            curr_module, pulse_type, parent_key = dq.popleft()
+            # print(
+            #      f"{parent_key} -{pulse_type}-> {curr_module}; "
+            # )
+            # print(next_level)
             ff_key = f"%{curr_module}"
             c_key = f"&{curr_module}"
             if ff_key in flip_flops:
@@ -51,15 +52,9 @@ def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: d
                         target_ff[1] = False
                     for next_module in target_ff[0]:
                         total_pulse[pulse_to_send] += 1
-                        # n_c_key = f"&{next_module}"
-                        # if n_c_key in conjuctions:
-                        #     curr_level.put((next_module, pulse_to_send, ff_key))
-                        # else:
-                        #     next_level.put((next_module, pulse_to_send, ff_key))
-                        next_level.put((next_module, pulse_to_send, ff_key))
-            if c_key in conjuctions:
+                        dq.append((next_module, pulse_to_send, ff_key))
+            elif c_key in conjuctions:
                 target_c = conjuctions[c_key]
-                # print(f"{target_c}, {c_key}")
                 if target_c[0][parent_key] != pulse_type:
                     target_c[0][parent_key] = pulse_type
                     if pulse_type == "l":
@@ -71,32 +66,16 @@ def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: d
                         target_c[1][0] -= 1
                         target_c[1][1] += 1
                 target_module_len = len(target_c[0])
-                to_send = False
                 pulse_to_send = pulse_type
-                if target_c[1][0] == target_module_len:
-                    pulse_to_send = "h"
-                    to_send = True
-                elif target_c[1][1] == target_module_len:
+                if target_c[1][1] == target_module_len:
                     pulse_to_send = "l"
-                    to_send = True
-                # print(f"dict: {target_c[0]}, pulse: {pulse_to_send}")
-                # all remembered inputs are the same
-                if to_send:
-                    for next_module in target_c[2]:
-                        total_pulse[pulse_to_send] += 1
-                        next_level.put((next_module, pulse_to_send, c_key))
+                else:
+                    pulse_to_send = "h"
 
-            if curr_level.qsize() == 0:
-                while next_level.qsize() > 0:
-                    curr_level.put(next_level.get())
+                for next_module in target_c[2]:
+                    total_pulse[pulse_to_send] += 1
+                    dq.append((next_module, pulse_to_send, c_key))
 
-        if is_original_state(flip_flops, conjuctions):
-            break
-        print("\n")
-    # print(f"cycles performed: {cycles}")
-    # print(flip_flops)
-    # print(conjuctions)
-    # print(f"pulse bookkeeping: {total_pulse}")
     return (total_pulse["l"] * total_pulse["h"])
 
 
@@ -153,7 +132,7 @@ if __name__ == "__main__":
     solution(
         [
             # "test.txt",
-            "test2.txt",
-            # "day_20_puzzle_input.txt"
+            # "test2.txt",
+            "day_20_puzzle_input.txt"
         ]
     )
