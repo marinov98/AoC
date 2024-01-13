@@ -1,5 +1,4 @@
 from queue import Queue
-from collections import deque
 
 
 def is_original_state(flip_flops: dict, conjuctions: dict) -> bool:
@@ -19,7 +18,7 @@ def is_original_state(flip_flops: dict, conjuctions: dict) -> bool:
 def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: dict):
     total_pulse = {"l": 0, "h": 0}
     cycles = 0
-    dq = deque()
+    q = Queue()
     for _ in range(1000):
         cycles += 1
         # low pulse from button module
@@ -28,10 +27,10 @@ def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: d
 
         for module in broadcaster:
             total_pulse["l"] += 1
-            dq.append((module, "l", "broadcaster"))
+            q.put((module, "l", "broadcaster"))
 
-        while dq:
-            curr_module, pulse_type, parent_key = dq.popleft()
+        while q.qsize() > 0:
+            curr_module, pulse_type, parent_key = q.get()
             # print(
             #      f"{parent_key} -{pulse_type}-> {curr_module}; "
             # )
@@ -52,7 +51,7 @@ def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: d
                         target_ff[1] = False
                     for next_module in target_ff[0]:
                         total_pulse[pulse_to_send] += 1
-                        dq.append((next_module, pulse_to_send, ff_key))
+                        q.put((next_module, pulse_to_send, ff_key))
             elif c_key in conjuctions:
                 target_c = conjuctions[c_key]
                 if target_c[0][parent_key] != pulse_type:
@@ -74,7 +73,7 @@ def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: d
 
                 for next_module in target_c[2]:
                     total_pulse[pulse_to_send] += 1
-                    dq.append((next_module, pulse_to_send, c_key))
+                    q.put((next_module, pulse_to_send, c_key))
 
     return (total_pulse["l"] * total_pulse["h"])
 
