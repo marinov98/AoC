@@ -34,7 +34,6 @@ def handle_broadcast_signals(broadcaster: list, flip_flops: dict, conjuctions: d
             # print(
             #      f"{parent_key} -{pulse_type}-> {curr_module}; "
             # )
-            # print(next_level)
             ff_key = f"%{curr_module}"
             c_key = f"&{curr_module}"
             if ff_key in flip_flops:
@@ -115,9 +114,6 @@ def solution_helper(input_file: str):
                 conjuctions[n_c_key][0][c_key] = "l"
                 conjuctions[n_c_key][1][0] += 1
 
-
-    # print(conjuctions["&db"])
-
     return handle_signals(broadcaster, flip_flops, conjuctions)
 
 
@@ -130,8 +126,8 @@ def solution(inputs: list[str]) -> None:
 if __name__ == "__main__":
     solution(
         [
-            # "test.txt",
-            # "test2.txt",
+            "test.txt",
+            "test2.txt",
             "day_20_puzzle_input.txt"
         ]
     )
