@@ -46,24 +46,29 @@ class CJ:
                 self.pulses[1] += 1
                 self.pulses[0] -= 1
 
-        if self.pulses[1] == len(self.inputs):
+        if self.all_match(1):
             return "l"
 
         return "h"
+
+    def all_match(self, idx) -> bool:
+        if 0 < idx < 3:
+            return self.pulses[idx] == len(self.inputs)
+        return False
 
     def __repr__(self):
         return f"{self.id}: inputs={self.inputs}, outputs={self.outputs}, pulses={self.pulses}"
 
 
-def is_original_state(flip_flops: dict, conjuctions: dict) -> bool:
+def is_original_state(flip_flops: dict[str, FF], conjuctions: dict[str, CJ]) -> bool:
     for ff_v in flip_flops.values():
         # make sure all flip flops are off
-        if ff_v[1] == True:
+        if ff_v.state == True:
             return False
 
     for c_v in conjuctions.values():
         # every memory has a remembered lo pulse state
-        if c_v[1][0] != len(c_v[0].keys()):
+        if not c_v.all_match(0):
             return False
 
     return True
@@ -108,7 +113,6 @@ def handle_signals(
                     q.put((next_module, pulse_to_send, c_key))
 
     return total_pulse["l"] * total_pulse["h"]
-
 
 
 def solution_helper(input_file: str):
