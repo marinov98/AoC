@@ -30,9 +30,9 @@ class CJ:
         self.outputs = outputs
         self.pulses = [0, 0]
 
-    def update_inputs(self, key: str) -> None:
+    def add_input(self, key: str) -> None:
         if key not in self.inputs:
-            # by default l is the remembered pulse
+            # by default low is the remembered pulse
             self.inputs[key] = "l"
             self.pulses[0] += 1
 
@@ -67,7 +67,7 @@ def is_original_state(flip_flops: dict[str, FF], conjuctions: dict[str, CJ]) -> 
             return False
 
     for c_v in conjuctions.values():
-        # every memory has a remembered lo pulse state
+        # every memory has a remembered low pulse state
         if not c_v.all_match(0):
             return False
 
@@ -135,13 +135,13 @@ def solution_helper(input_file: str) -> int:
         for input in ff_val.outputs:
             c_key = f"&{input}"
             if c_key in conjuctions:
-                conjuctions[c_key].update_inputs(ff_key)
+                conjuctions[c_key].add_input(ff_key)
 
     for c_key, c_val in conjuctions.items():
         for output in c_val.outputs:
             n_c_key = f"&{output}"
             if n_c_key in conjuctions:
-                conjuctions[n_c_key].update_inputs(c_key)
+                conjuctions[n_c_key].add_input(c_key)
 
     return handle_signals(broadcaster, flip_flops, conjuctions)
 
