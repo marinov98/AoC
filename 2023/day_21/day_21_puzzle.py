@@ -12,13 +12,8 @@ def find_steps(start: tuple, grid: list, max_steps: int):
     while q.qsize() > 0:
         r, c, curr_steps = q.get()
 
-        if (curr_steps, r, c) in visited or grid[r][c] == "#":
-            continue
-
         if curr_steps == max_steps:
             total_plots += 1
-
-        visited.add((curr_steps, r, c))
 
         possible_moves = ["n", "s", "e", "w"]
 
@@ -28,7 +23,8 @@ def find_steps(start: tuple, grid: list, max_steps: int):
             n_c = c + d_c
 
             if -1 < n_r < rows and -1 < n_c < cols:
-                if curr_steps < max_steps:
+                if curr_steps < max_steps and (curr_steps, n_r, n_c) not in visited and grid[n_r][n_c] != "#":
+                    visited.add((curr_steps, n_r, n_c))
                     q.put((n_r, n_c, curr_steps + 1))
 
     return total_plots
