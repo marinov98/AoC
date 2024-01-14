@@ -15,13 +15,10 @@ def find_steps(start: tuple, grid: list, max_steps: int):
         if (curr_steps, r, c) in visited or grid[r][c] == "#":
             continue
 
+        if curr_steps == max_steps:
+            total_plots += 1
 
         visited.add((curr_steps, r, c))
-
-        if curr_steps == max_steps:
-            visited.add((r, c))
-            grid[r][c] = "O"
-            total_plots += 1
 
         possible_moves = ["n", "s", "e", "w"]
 
