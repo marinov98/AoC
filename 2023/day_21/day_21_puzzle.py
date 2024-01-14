@@ -8,12 +8,12 @@ def find_steps_inf(start: tuple, grid: list, max_steps: int):
     cols = len(grid[0])
     q = Queue()
     q.put((start[0], start[1], int(0)))
-    visited = set()
+    visited = {(start[0], start[1], (0, 0))}
     dirs = {"n": (-1, 0), "s": (1, 0), "e": (0, -1), "w": (0, 1)}
     while q.qsize() > 0:
         r, c, curr_steps = q.get()
 
-        if curr_steps == max_steps:
+        if curr_steps % 2 == 0:
             total_plots += 1
 
         possible_moves = ["n", "s", "e", "w"]
@@ -27,10 +27,10 @@ def find_steps_inf(start: tuple, grid: list, max_steps: int):
 
             if (
                 curr_steps < max_steps
-                and (curr_steps, n_r, n_c, curr_id) not in visited
+                and (n_r, n_c, curr_id) not in visited
                 and grid[n_r % rows][n_c % cols] != "#"
             ):
-                visited.add((curr_steps, n_r, n_c, curr_id))
+                visited.add((n_r, n_c, curr_id))
                 q.put((n_r, n_c, curr_steps + 1))
 
     return total_plots
@@ -90,7 +90,7 @@ def solution_helper(input_file: str):
             grid.append(list(line))
             curr_r += 1
 
-    return find_steps((s_r, s_c), grid, 64), find_steps_inf((s_r, s_c), grid, 10)
+    return find_steps((s_r, s_c), grid, 64), find_steps_inf((s_r, s_c), grid, 5000)
 
 
 def solution(inputs: list[str]) -> None:
@@ -101,4 +101,9 @@ def solution(inputs: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    solution(["test.txt", "day_21_puzzle_input.txt"])
+    solution(
+        [
+            "test.txt",
+            # "day_21_puzzle_input.txt"
+        ]
+    )
