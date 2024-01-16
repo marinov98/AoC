@@ -154,13 +154,13 @@ def solution_helper(input_file: str):
 def solution(inputs: list[str]) -> None:
     for input_file in inputs:
         ans = solution_helper(input_file)
-        print(f"Solution using file '{input_file}': {ans}")
+        print(f"Solution(s) using file '{input_file}': {ans}")
 
 
 if __name__ == "__main__":
     solution(
         [
-            # "test.txt",
+            "test.txt",
             "day_23_puzzle_input.txt"
         ]
     )
