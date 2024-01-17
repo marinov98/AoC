@@ -1,3 +1,5 @@
+import sympy
+
 class HailStone:
     def __init__(self, sx, sy, sz, vx, vy, vz):
         self.sx = sx
@@ -12,11 +14,33 @@ class HailStone:
         self.b = -vx
         self.c = vy * sx - vx * sy
 
+    def get_properties(self):
+        return self.sx, self.sy, self.sz, self.vx, self.vy, self.vz
+
     def __repr__(self):
         return f"\nH initial sx: {self.sx} sy: {self.sy} sz: {self.sz} velocity: vx: {self.vx}  vy: {self.vy} vz: {self.vz} a: {self.a} b: {self.b} c: {self.c}"
 
 
-def find_intersections(hailstones: list[HailStone], range_start, range_end):
+def find_the_stone(hailstones: list[tuple]):
+
+    xr, yr, zr, vxr, vyr, vzr = sympy.symbols("xr, yr, zr, vxr, vyr, vzr")
+
+    equations = []
+
+    answers = []
+    for i, (sx, sy, sz, vx, vy, vz) in enumerate(hailstones):
+        equations.append((xr - sx) * (vy - vyr) - (yr - sy) * (vx - vxr))
+        equations.append((yr - sy) * (vz - vzr) - (zr - sz) * (vy - vyr))
+        if i < 2:
+            continue
+        answers = [soln for soln in sympy.solve(equations) if all(x % 1 == 0 for x in soln.values())]
+        if len(answers) == 1:
+            break
+        
+    answer = answers[0]
+    return answer[xr] + answer[yr] + answer[zr]
+
+def find_intersections(hailstones: list[HailStone], range_start: int, range_end: int) -> int:
     total = 0
     for i, hs1 in enumerate(hailstones):
         for hs2 in hailstones[:i]:
@@ -46,13 +70,15 @@ def find_intersections(hailstones: list[HailStone], range_start, range_end):
 
 def solution_helper(input_file: str):
     hailstones = []
+    hailtstones_alt = None
+
     with open(input_file, "r") as file:
+        hailtstones_alt = [tuple(map(int, line.replace("@", ",").split(","))) for line in file]
         for line in file:
             line = line.strip()
             hailstones.append(HailStone(*map(int, line.replace("@", ",").split(","))))
 
-    return find_intersections(hailstones, 200000000000000, 400000000000000)
-    # return find_intersections(hailstones, 7, 27)
+    return find_intersections(hailstones, 200000000000000, 400000000000000), find_the_stone(hailtstones_alt)
 
 
 def solution(inputs: list[str]) -> None:
