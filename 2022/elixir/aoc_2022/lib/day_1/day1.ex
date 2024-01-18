@@ -1,5 +1,5 @@
 defmodule Day1 do
-  @inputs [ "lib/day_1/test.txt", "lib/day_1/day_1_input.txt" ]
+  @inputs [ "lib/day_1/test.txt", "lib/day_1/day1input.txt" ]
 
   def solution() do
     @inputs
