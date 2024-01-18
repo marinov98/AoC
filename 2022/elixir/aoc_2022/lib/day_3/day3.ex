@@ -124,7 +124,11 @@ defmodule Day3 do
     input
     |> Enum.chunk_every(3)
     |> Enum.map(&part2_utility/1)
-    |> Enum.flat_map(& &1)
-    |> Enum.sum()
+    # just testing out flat map reduce (flat map |> sum seems more elegant)
+    |> Enum.flat_map_reduce(0, &{[], &2 + List.first(MapSet.to_list(&1))})
+    |> elem(1)
+    # different variant
+    # |> Enum.flat_map(& &1)
+    # |> Enum.sum()
   end
 end
