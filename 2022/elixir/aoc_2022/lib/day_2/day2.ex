@@ -66,15 +66,11 @@ defmodule Day2 do
 
   def part1(input) do
     input
-    |> Enum.reduce(0, fn elems, acc ->
-      handle_match(List.first(elems), List.last(elems)) + acc
-    end)
+    |> Enum.reduce(0, &(handle_match(List.first(&1), List.last(&1)) + &2))
   end
 
   def part2(input) do
     input
-    |> Enum.reduce(0, fn elems, acc ->
-      handle_match2(List.first(elems), List.last(elems)) + acc
-    end)
+    |> Enum.reduce(0, &(handle_match2(List.first(&1), List.last(&1)) + &2))
   end
 end
