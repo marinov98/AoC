@@ -82,7 +82,7 @@ defmodule Day3 do
     |> String.graphemes()
     |> Enum.reduce(MapSet.new(), fn elem, acc ->
       case MapSet.member?(char_set, elem) do
-        true -> MapSet.put(acc, elem)
+        true -> MapSet.put(acc, Map.get(@point_tracker, elem))
         false -> acc
       end
     end)
@@ -92,7 +92,6 @@ defmodule Day3 do
     input
     |> Enum.map(&part1_utility/1)
     |> Enum.flat_map(& &1)
-    |> Enum.map(&Map.get(@point_tracker, &1))
     |> Enum.sum()
   end
 
@@ -115,7 +114,7 @@ defmodule Day3 do
     |> String.graphemes()
     |> Enum.reduce(MapSet.new(), fn elem, acc ->
       case MapSet.member?(first_map, elem) and MapSet.member?(second_map, elem) do
-        true -> MapSet.put(acc, elem)
+        true -> MapSet.put(acc, Map.get(@point_tracker, elem))
         false -> acc
       end
     end)
@@ -126,7 +125,6 @@ defmodule Day3 do
     |> Enum.chunk_every(3)
     |> Enum.map(&part2_utility/1)
     |> Enum.flat_map(& &1)
-    |> Enum.map(&Map.get(@point_tracker, &1))
     |> Enum.sum()
   end
 end
