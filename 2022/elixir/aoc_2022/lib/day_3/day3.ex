@@ -1,5 +1,4 @@
 defmodule Day3 do
-  # "lib/day_3/day3input.txt"]
   @inputs ["lib/day_3/test.txt", "lib/day_3/day3input.txt"]
   @point_tracker %{
     "a" => 1,
@@ -71,7 +70,7 @@ defmodule Day3 do
     {part1(input), part2(input)}
   end
 
-  def part1_utility(rucksack) do
+  defp part1_utility(rucksack) do
     {left, right} = String.split_at(rucksack, div(String.length(rucksack), 2))
 
     char_set =
@@ -97,7 +96,37 @@ defmodule Day3 do
     |> Enum.sum()
   end
 
+  defp part2_utility(triplets) do
+    [first | middle] = triplets
+    second = List.first(middle)
+    third = List.last(middle)
+
+    first_map =
+      first
+      |> String.graphemes()
+      |> Enum.reduce(MapSet.new(), fn elem, acc -> MapSet.put(acc, elem) end)
+
+    second_map =
+      second
+      |> String.graphemes()
+      |> Enum.reduce(MapSet.new(), fn elem, acc -> MapSet.put(acc, elem) end)
+
+    third
+    |> String.graphemes()
+    |> Enum.reduce(MapSet.new(), fn elem, acc ->
+      case MapSet.member?(first_map, elem) and MapSet.member?(second_map, elem) do
+        true -> MapSet.put(acc, elem)
+        false -> acc
+      end
+    end)
+  end
+
   def part2(input) do
-    0
+    input
+    |> Enum.chunk_every(3)
+    |> Enum.map(&part2_utility/1)
+    |> Enum.flat_map(& &1)
+    |> Enum.map(&Map.get(@point_tracker, &1))
+    |> Enum.sum()
   end
 end
