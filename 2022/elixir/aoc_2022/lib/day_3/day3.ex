@@ -76,7 +76,7 @@ defmodule Day3 do
     char_set =
       left
       |> String.graphemes()
-      |> Enum.reduce(MapSet.new(), fn elem, acc -> MapSet.put(acc, elem) end)
+      |> Enum.reduce(MapSet.new(), &MapSet.put(&2, &1))
 
     right
     |> String.graphemes()
@@ -103,12 +103,12 @@ defmodule Day3 do
     first_map =
       first
       |> String.graphemes()
-      |> Enum.reduce(MapSet.new(), fn elem, acc -> MapSet.put(acc, elem) end)
+      |> Enum.reduce(MapSet.new(), &MapSet.put(&2, &1))
 
     second_map =
       second
       |> String.graphemes()
-      |> Enum.reduce(MapSet.new(), fn elem, acc -> MapSet.put(acc, elem) end)
+      |> Enum.reduce(MapSet.new(), &MapSet.put(&2, &1))
 
     third
     |> String.graphemes()
