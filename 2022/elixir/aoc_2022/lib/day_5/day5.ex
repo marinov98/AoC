@@ -43,16 +43,13 @@ defmodule Day5 do
   def format_result(res_map) do
     res_map
     |> Map.to_list()
-    |> Enum.filter(fn elem ->
-      {_, stack} = elem
-
+    |> Enum.filter(fn {_, stack} ->
       case stack do
         [] -> false
         _ -> true
       end
     end)
-    |> Enum.map(fn elem ->
-      {_, stack} = elem
+    |> Enum.map(fn {_, stack} ->
       List.last(stack)
     end)
     |> Enum.join()
