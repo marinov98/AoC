@@ -40,10 +40,8 @@ defmodule Day5 do
     {stacks, instructions}
   end
 
-  def part1(input) do
-    {stack_map, instructions} = input
-
-    part1_utility(stack_map, instructions)
+  def format_result(res_map) do
+    res_map
     |> Map.to_list()
     |> Enum.filter(fn elem ->
       {_, stack} = elem
@@ -60,19 +58,26 @@ defmodule Day5 do
     |> Enum.join()
   end
 
-  def part1_utility(stack_map, instructions) do
+  def part1(input) do
+    {stack_map, instructions} = input
+
+    simulation(stack_map, instructions, &part1_utility/3)
+    |> format_result
+  end
+
+  def simulation(stack_map, instructions, utility_fn) do
     case instructions do
       [] ->
         stack_map
 
       _ ->
         [curr_instruction | rest] = instructions
-        stack_map = part1_bonus_utility(stack_map, curr_instruction, 1)
-        part1_utility(stack_map, rest)
+        stack_map = utility_fn.(stack_map, curr_instruction, 1)
+        simulation(stack_map, rest, utility_fn)
     end
   end
 
-  def part1_bonus_utility(stack_map, curr_instruction, curr_move) do
+  def part1_utility(stack_map, curr_instruction, curr_move) do
     {move, from, to} = curr_instruction
 
     cond do
@@ -86,7 +91,7 @@ defmodule Day5 do
         new_to_stack = List.insert_at(to_stack, -1, elem)
         stack_map = Map.update(stack_map, from, [], fn _ -> new_from_stack end)
         stack_map = Map.update(stack_map, to, [], fn _ -> new_to_stack end)
-        part1_bonus_utility(stack_map, curr_instruction, curr_move + 1)
+        part1_utility(stack_map, curr_instruction, curr_move + 1)
     end
   end
 end
