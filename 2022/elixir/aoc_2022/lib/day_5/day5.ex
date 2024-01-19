@@ -1,6 +1,5 @@
 defmodule Day5 do
-  # "lib/day_5/day5input.txt"]
-  @inputs ["lib/day_5/test.txt"]
+  @inputs ["lib/day_5/test.txt", "lib/day_5/day5input.txt"]
 
   def solution() do
     @inputs
@@ -33,7 +32,7 @@ defmodule Day5 do
       |> Enum.map(fn elem ->
         elem
         |> String.split(" ")
-        |> Enum.filter(&(String.length(&1) == 1))
+        |> Enum.filter(&(&1 != "move" and &1 != "from" and &1 != "to"))
         |> Enum.map(&String.to_integer/1)
         |> List.to_tuple()
       end)
@@ -44,26 +43,26 @@ defmodule Day5 do
   def part1(input) do
     {stack_map, instructions} = input
 
-    # IO.inspect(instructions)
-    #
-    # for {move, from, to} <- instructions do
-    #   from_stack = Map.get(stack_map, from)
-    #   to_stack = Map.get(stack_map, to)
-    #
-    #   for _ <- 1..move do
-    #     {elem, new_from_stack} = List.pop_at(from_stack, -1)
-    #     new_to_stack = List.insert_at(to_stack, -1, elem)
-    #     stack_map = Map.update(stack_map, from, [], fn _ -> new_from_stack end)
-    #     stack_map = Map.update(stack_map, to, [], fn _ -> new_to_stack end)
-    #   end
-    # end
     part1_utility(stack_map, instructions)
+    |> Map.to_list()
+    |> Enum.filter(fn elem ->
+      {_, stack} = elem
+
+      case stack do
+        [] -> false
+        _ -> true
+      end
+    end)
+    |> Enum.map(fn elem ->
+      {_, stack} = elem
+      List.last(stack)
+    end)
+    |> Enum.join()
   end
 
   def part1_utility(stack_map, instructions) do
     case instructions do
       [] ->
-        IO.inspect(stack_map)
         stack_map
 
       _ ->
