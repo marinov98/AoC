@@ -13,7 +13,7 @@ defmodule Day5 do
       |> String.split("\n\n", trim: true)
       |> construct_from_input
 
-    {part1(input), 0}
+    {part1(input), part2(input)}
   end
 
   def construct_from_input(input) do
@@ -58,13 +58,6 @@ defmodule Day5 do
     |> Enum.join()
   end
 
-  def part1(input) do
-    {stack_map, instructions} = input
-
-    simulation(stack_map, instructions, &part1_utility/3)
-    |> format_result
-  end
-
   def simulation(stack_map, instructions, utility_fn) do
     case instructions do
       [] ->
@@ -72,12 +65,19 @@ defmodule Day5 do
 
       _ ->
         [curr_instruction | rest] = instructions
-        stack_map = utility_fn.(stack_map, curr_instruction, 1)
+        stack_map = utility_fn.(stack_map, curr_instruction)
         simulation(stack_map, rest, utility_fn)
     end
   end
 
-  def part1_utility(stack_map, curr_instruction, curr_move) do
+  def part1(input) do
+    {stack_map, instructions} = input
+
+    simulation(stack_map, instructions, &part1_utility/2)
+    |> format_result
+  end
+
+  def part1_utility(stack_map, curr_instruction, curr_move \\ 1) do
     {move, from, to} = curr_instruction
 
     cond do
@@ -92,6 +92,30 @@ defmodule Day5 do
         stack_map = Map.update(stack_map, from, [], fn _ -> new_from_stack end)
         stack_map = Map.update(stack_map, to, [], fn _ -> new_to_stack end)
         part1_utility(stack_map, curr_instruction, curr_move + 1)
+    end
+  end
+
+  def part2(input) do
+    {stack_map, instructions} = input
+
+    simulation(stack_map, instructions, &part2_utility/2)
+    |> format_result
+  end
+
+  def part2_utility(stack_map, curr_instruction, curr_move \\ 1, load \\ []) do
+    {move, from, to} = curr_instruction
+
+    cond do
+      move < curr_move ->
+        to_stack = Map.get(stack_map, to)
+        Map.update(stack_map, to, [], fn _ -> to_stack ++ load end)
+
+      true ->
+        from_stack = Map.get(stack_map, from)
+        {elem, new_from_stack} = List.pop_at(from_stack, -1)
+        load = [elem | load]
+        stack_map = Map.update(stack_map, from, [], fn _ -> new_from_stack end)
+        part2_utility(stack_map, curr_instruction, curr_move + 1, load)
     end
   end
 end
