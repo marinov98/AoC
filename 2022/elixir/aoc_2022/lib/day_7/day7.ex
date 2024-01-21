@@ -92,6 +92,27 @@ defmodule Day7 do
 
   def part2(input) do
     input
-    0
+    |> part1_utility(List.first(input))
+    |> part2_utility()
+  end
+  defp part2_utility(size_tracker) do
+    maximum = 70000000
+    minimum = 30000000
+    curr_size = 70000000 - Map.get(size_tracker, "/")
+    IO.inspect(curr_size)
+    size_tracker
+    |> Enum.reduce({0, maximum}, fn {_ , v}, {val, diff} -> 
+        case curr_size + v >= minimum do
+          true ->
+            if curr_size + v < diff do
+              {v, curr_size + v}
+            else 
+              {val, diff}
+            end
+          false ->
+            {val , diff}
+          end
+    end)
+    |> elem(0)
   end
 end
