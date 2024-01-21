@@ -12,15 +12,12 @@ defmodule Day8 do
       input_file
       |> File.read!()
       |> String.split("\n", trim: true)
+      |> Enum.map(fn elem -> elem |> String.graphemes() |> Enum.map(&String.to_integer/1) end)
 
     {part1(input), 0}
   end
 
-  def part1(input) do
-    grid =
-      input
-      |> Enum.map(fn elem -> elem |> String.graphemes() |> Enum.map(&String.to_integer/1) end)
-
+  def part1(grid) do
     rows = length(grid)
     cols = hd(grid) |> length
 
