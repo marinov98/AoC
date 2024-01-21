@@ -37,7 +37,7 @@ defmodule Day8 do
 
     for r <- 1..(rows - 2), c <- 1..(cols - 2), reduce: {MapSet.size(dp), dp} do
       {num_visible, dp} ->
-        {is_visible, dp} = visible?(grid, r, c, rows, cols, dp)
+        {is_visible, dp} = visible?(grid, r, c, dp)
 
         case is_visible do
           true -> {num_visible + 1, dp}
@@ -47,14 +47,10 @@ defmodule Day8 do
     |> elem(0)
   end
 
-  defp visible?(grid, r, c, rows, cols, dp) do
+  defp visible?(grid, r, c, dp) do
     curr = get_in(grid, [Access.at(r), Access.at(c)])
 
     cond do
-      r == 0 or c == 0 or r == rows - 1 or c == cols - 1 ->
-        dp = MapSet.put(dp, {r, c, "e"})
-        {true, dp}
-
       is_visible_dir?(grid, r, c - 1, curr, dp, "l") ->
         dp = MapSet.put(dp, {r, c, "l"})
         {true, dp}
