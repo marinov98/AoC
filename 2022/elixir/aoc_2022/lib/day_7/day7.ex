@@ -28,7 +28,7 @@ defmodule Day7 do
     |> Enum.sum()
   end
 
-  def part1_utility(input, curr_line, path \\ [], curr_dir \\ "", size_tracker \\ %{}, children_tracker \\ %{}, file_name_tracker \\ %{}) do
+  defp part1_utility(input, curr_line, path \\ [], curr_dir \\ "", size_tracker \\ %{}, children_tracker \\ %{}, file_name_tracker \\ %{}) do
     case input do
       [] -> 
         size_tracker
@@ -79,12 +79,7 @@ defmodule Day7 do
     end
   end
 
-  def part2(input) do
-    input
-    0
-  end
-
-  def update_parents(path, size_tracker, val) do
+  defp update_parents(path, size_tracker, val) do
     [_ | rest] = path
     case rest do
        [] -> 
@@ -95,5 +90,8 @@ defmodule Day7 do
     end
   end
 
-
+  def part2(input) do
+    input
+    0
+  end
 end
