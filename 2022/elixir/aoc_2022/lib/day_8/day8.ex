@@ -117,12 +117,9 @@ defmodule Day8 do
 
   def get_scenic_score(grid, r, c) do
     curr = get_in(grid, [Access.at(r), Access.at(c)])
-    view_dist_l = calc_dist(grid, r, c - 1, curr, "l")
-    view_dist_r = calc_dist(grid, r, c + 1, curr, "r")
-    view_dist_u = calc_dist(grid, r - 1, c, curr, "u")
-    view_dist_d = calc_dist(grid, r + 1, c, curr, "d")
 
-    view_dist_l * view_dist_r * view_dist_u * view_dist_d
+    calc_dist(grid, r, c - 1, curr, "l") * calc_dist(grid, r, c + 1, curr, "r") *
+      calc_dist(grid, r - 1, c, curr, "u") * calc_dist(grid, r + 1, c, curr, "d")
   end
 
   def calc_dist(grid, r, c, val, dir) do
