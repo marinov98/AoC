@@ -29,7 +29,7 @@ defmodule Day8 do
       end
 
     dp =
-      for col_edge <- 0..(cols - 1), reduce: dp do
+      for col_edge <- 1..(cols - 2), reduce: dp do
         acc ->
           acc = MapSet.put(acc, {0, col_edge, "e"})
           MapSet.put(acc, {rows - 1, col_edge, "e"})
