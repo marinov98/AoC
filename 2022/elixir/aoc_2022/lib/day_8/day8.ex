@@ -21,13 +21,27 @@ defmodule Day8 do
     rows = length(grid)
     cols = hd(grid) |> length
 
-    for r <- 0..(rows - 1), c <- 0..(cols - 1), reduce: {0, MapSet.new()} do
-      {num_visible, visible_set} ->
-        {is_visible, visible_set} = visible?(grid, r, c, rows, cols, visible_set)
+    dp =
+      for row_edge <- 0..(rows - 1), reduce: MapSet.new() do
+        acc ->
+          acc = MapSet.put(acc, {row_edge, 0, "e"})
+          MapSet.put(acc, {row_edge, cols - 1, "e"})
+      end
+
+    dp =
+      for col_edge <- 0..(cols - 1), reduce: dp do
+        acc ->
+          acc = MapSet.put(acc, {0, col_edge, "e"})
+          MapSet.put(acc, {rows - 1, col_edge, "e"})
+      end
+
+    for r <- 1..(rows - 2), c <- 1..(cols - 2), reduce: {MapSet.size(dp), dp} do
+      {num_visible, dp} ->
+        {is_visible, dp} = visible?(grid, r, c, rows, cols, dp)
 
         case is_visible do
-          true -> {num_visible + 1, visible_set}
-          false -> {num_visible, visible_set}
+          true -> {num_visible + 1, dp}
+          false -> {num_visible, dp}
         end
     end
     |> elem(0)
@@ -70,9 +84,6 @@ defmodule Day8 do
           (MapSet.member?(dp, {r, c, dir}) or MapSet.member?(dp, {r, c, "e"})) ->
         true
 
-      curr == nil ->
-        true
-
       val > curr ->
         case dir do
           "l" ->
@@ -97,23 +108,9 @@ defmodule Day8 do
     rows = length(grid)
     cols = hd(grid) |> length
 
-    dp =
-      for row_edge <- 0..(rows - 1), reduce: %{} do
-        acc ->
-          acc = Map.put(acc, {row_edge, 0, "e"}, 0)
-          Map.put(acc, {row_edge, cols - 1, "e"}, 0)
-      end
-
-    dp =
-      for col_edge <- 0..(cols - 1), reduce: dp do
-        acc ->
-          acc = Map.put(acc, {0, col_edge, "e"}, 0)
-          Map.put(acc, {rows - 1, col_edge, "e"}, 0)
-      end
-
     for r <- 1..(rows - 2), c <- 1..(cols - 2), reduce: 0 do
       max_score ->
-        curr_score = get_scenic_score(grid, r, c, rows, cols)
+        curr_score = get_scenic_score(grid, r, c)
 
         case curr_score > max_score do
           true -> curr_score
@@ -122,7 +119,7 @@ defmodule Day8 do
     end
   end
 
-  def get_scenic_score(grid, r, c, rows, cols) do
+  def get_scenic_score(grid, r, c) do
     curr = get_in(grid, [Access.at(r), Access.at(c)])
     view_dist_l = calc_dist(grid, r, c - 1, curr, "l")
     view_dist_r = calc_dist(grid, r, c + 1, curr, "r")
