@@ -105,13 +105,8 @@ defmodule Day8 do
     cols = hd(grid) |> length
 
     for r <- 1..(rows - 2), c <- 1..(cols - 2), reduce: 0 do
-      max_score ->
-        curr_score = get_scenic_score(grid, r, c)
-
-        case curr_score > max_score do
-          true -> curr_score
-          false -> max_score
-        end
+      curr_max_score ->
+        max(curr_max_score, get_scenic_score(grid, r, c))
     end
   end
 
