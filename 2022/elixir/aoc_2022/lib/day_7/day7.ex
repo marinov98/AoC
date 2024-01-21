@@ -31,7 +31,6 @@ defmodule Day7 do
   def part1_utility(input, curr_line, path \\ [], curr_dir \\ "", size_tracker \\ %{}, children_tracker \\ %{}, file_name_tracker \\ %{}) do
     case input do
       [] -> 
-        # {size_tracker, children_tracker}
         size_tracker
       _ ->
       split = String.split(curr_line, " ")
@@ -64,12 +63,12 @@ defmodule Day7 do
             part1_utility(next_lines, List.first(next_lines), path, curr_dir, size_tracker, children_tracker, file_name_tracker)
         _ -> # size
             file_name = List.last(split)
-            curr_files = Map.get(file_name_tracker, curr_dir, MapSet.new())
+            curr_files = Map.get(file_name_tracker, Enum.join(path), MapSet.new())
             case  MapSet.member?(curr_files, file_name) do
               false -> 
                 val = String.to_integer(List.first(split))
                 curr_files = MapSet.put(curr_files, file_name)
-                file_name_tracker = Map.put(file_name_tracker, curr_dir, curr_files)
+                file_name_tracker = Map.put(file_name_tracker, Enum.join(path), curr_files)
                 size_tracker = Map.update(size_tracker, Enum.join(path), val, &(&1 + val))
                 size_tracker = update_parents(path, size_tracker, val)
                 part1_utility(next_lines, List.first(next_lines), path, curr_dir, size_tracker, children_tracker, file_name_tracker)
@@ -92,6 +91,7 @@ defmodule Day7 do
         size_tracker
        _ ->
         size_tracker = Map.update(size_tracker, Enum.join(rest), val, &(&1 + val))
+        update_parents(rest, size_tracker, val)
     end
   end
 
