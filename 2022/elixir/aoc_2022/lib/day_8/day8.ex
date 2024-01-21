@@ -13,6 +13,7 @@ defmodule Day8 do
       |> File.read!()
       |> String.split("\n", trim: true)
       |> Enum.map(&String.graphemes/1)
+
     {part1(input), 0}
   end
 
