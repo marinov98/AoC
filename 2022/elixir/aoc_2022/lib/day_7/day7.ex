@@ -34,7 +34,6 @@ defmodule Day7 do
          path \\ [],
          curr_dir \\ "",
          size_tracker \\ %{},
-         children_tracker \\ %{},
          file_name_tracker \\ %{}
        ) do
     case input do
@@ -58,7 +57,6 @@ defmodule Day7 do
                 case curr_dir do
                   # should be first command
                   "" ->
-                    children_tracker = Map.put(children_tracker, next_dir, MapSet.new())
                     path = [next_dir]
                     size_tracker = Map.put(size_tracker, Enum.join(path), 0)
 
@@ -68,7 +66,6 @@ defmodule Day7 do
                       path,
                       next_dir,
                       size_tracker,
-                      children_tracker,
                       file_name_tracker
                     )
 
@@ -83,7 +80,6 @@ defmodule Day7 do
                           remaining_path,
                           prev_dir,
                           size_tracker,
-                          children_tracker,
                           file_name_tracker
                         )
 
@@ -94,7 +90,6 @@ defmodule Day7 do
                           [next_dir | path],
                           next_dir,
                           size_tracker,
-                          children_tracker,
                           file_name_tracker
                         )
                     end
@@ -107,7 +102,6 @@ defmodule Day7 do
                   path,
                   curr_dir,
                   size_tracker,
-                  children_tracker,
                   file_name_tracker
                 )
             end
@@ -120,7 +114,6 @@ defmodule Day7 do
               path,
               curr_dir,
               size_tracker,
-              children_tracker,
               file_name_tracker
             )
 
@@ -143,7 +136,6 @@ defmodule Day7 do
                   path,
                   curr_dir,
                   size_tracker,
-                  children_tracker,
                   file_name_tracker
                 )
 
@@ -154,7 +146,6 @@ defmodule Day7 do
                   path,
                   curr_dir,
                   size_tracker,
-                  children_tracker,
                   file_name_tracker
                 )
             end
