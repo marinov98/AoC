@@ -176,7 +176,6 @@ defmodule Day7 do
     maximum = 70_000_000
     minimum = 30_000_000
     curr_size = 70_000_000 - Map.get(size_tracker, "/")
-    IO.inspect(curr_size)
 
     size_tracker
     |> Enum.reduce({0, maximum}, fn {_, v}, {val, diff} ->
