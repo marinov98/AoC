@@ -30,6 +30,13 @@ defmodule Day1 do
   def part2(input) do
     input
     # alternative lazy method with sorting and taking the first 3
+    # |> Enum.map(fn curr_str ->
+    #         curr_str
+    #         |> String.trim()
+    #         |> String.split("\n")
+    #         |> Enum.map(&String.to_integer/1)
+    #         |> Enum.sum()
+    #       end)
     #    |> Enum.sort(&(&1 >= &2))
     #    |> Enum.take(3)
     #    |> Enum.sum
