@@ -28,13 +28,13 @@ defmodule Day9 do
         curr_moves = curr_dir_split |> List.last() |> String.to_integer()
 
         {h_r, h_c, t_r, t_c, tracker} =
-          part1_helper(curr_dir, curr_moves, h_r, h_c, t_r, t_c, tracker)
+          simulation_helper(curr_dir, curr_moves, h_r, h_c, t_r, t_c, tracker, &fix_tail/4)
 
         part1(rest, h_r, h_c, t_r, t_c, tracker)
     end
   end
 
-  defp part1_helper(dir, moves, h_r, h_c, t_r, t_c, tracker) do
+  defp simulation_helper(dir, moves, h_r, h_c, t_r, t_c, tracker, tail_fn) do
     tracker = MapSet.put(tracker, {t_r, t_c})
 
     case moves do
@@ -45,23 +45,23 @@ defmodule Day9 do
         case dir do
           "R" ->
             h_c = h_c + 1
-            {t_r, t_c} = fix_tail(h_r, h_c, t_r, t_c)
-            part1_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker)
+            {t_r, t_c} = tail_fn.(h_r, h_c, t_r, t_c)
+            simulation_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker, tail_fn)
 
           "L" ->
             h_c = h_c - 1
-            {t_r, t_c} = fix_tail(h_r, h_c, t_r, t_c)
-            part1_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker)
+            {t_r, t_c} = tail_fn.(h_r, h_c, t_r, t_c)
+            simulation_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker, tail_fn)
 
           "D" ->
             h_r = h_r - 1
-            {t_r, t_c} = fix_tail(h_r, h_c, t_r, t_c)
-            part1_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker)
+            {t_r, t_c} = tail_fn.(h_r, h_c, t_r, t_c)
+            simulation_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker, tail_fn)
 
           "U" ->
             h_r = h_r + 1
-            {t_r, t_c} = fix_tail(h_r, h_c, t_r, t_c)
-            part1_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker)
+            {t_r, t_c} = tail_fn.(h_r, h_c, t_r, t_c)
+            simulation_helper(dir, moves - 1, h_r, h_c, t_r, t_c, tracker, tail_fn)
         end
     end
   end
