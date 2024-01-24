@@ -16,9 +16,13 @@ defmodule Day10 do
       |> String.split("\n", trim: true)
       |> Enum.map(&String.split/1)
 
-    {part1(input), :not_implemented} #part2(input)}
+    # part2(input)}
+    {part1(input), :not_implemented}
   end
 
+  @doc """
+    Part 1 of the puzzle
+  """
   def part1(input) do
     input
     |> simulation
@@ -32,6 +36,7 @@ defmodule Day10 do
     # end)
   end
 
+  @spec simulation(list(String.t()), integer(), integer(), integer()) :: integer()
   defp simulation(instructions, x \\ 1, cycle \\ 1, signal_strs_sum \\ 0) do
     case instructions do
       [] ->
@@ -67,11 +72,15 @@ defmodule Day10 do
     end
   end
 
+  @doc """
+    Part 2 of the puzzle
+  """
   def part2(input) do
     input
     |> simulation_alt
   end
 
+  @spec simulation_alt(list(String.t()), integer(), list(tuple())) :: list(tuple())
   defp simulation_alt(instructions, x \\ 1, history \\ [{1, 0}]) do
     case Enum.empty?(instructions) do
       true ->
