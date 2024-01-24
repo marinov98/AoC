@@ -22,7 +22,7 @@ defmodule Day10 do
     input
     |> Enum.map(&String.split/1)
     |> simulation
-    |> Enum.sum
+    |> Enum.sum()
   end
 
   defp simulation(instructions, x \\ 1, cycle \\ 1, signal_str_sum \\ []) do
