@@ -17,7 +17,7 @@ defmodule Day10 do
       |> Enum.map(&String.split/1)
 
     # part2(input)}
-    {part1(input), :not_implemented}
+    {part1(input), part2(input)}
   end
 
   @doc """
@@ -78,6 +78,9 @@ defmodule Day10 do
   def part2(input) do
     input
     |> simulation_alt
+    |> Enum.drop(1)
+    |> Enum.drop(-1)
+    |> render()
   end
 
   @spec simulation_alt(list(String.t()), integer(), list(tuple())) :: list(tuple())
@@ -102,6 +105,42 @@ defmodule Day10 do
             history = [{x, cycle + 1} | history]
             history = [{x, cycle + 2} | history]
             simulation_alt(rest, x + val, history)
+        end
+    end
+  end
+
+  defp render(history, curr_str \\ "") do
+    case Enum.empty?(history) do
+      true ->
+        IO.puts(curr_str)
+
+      false ->
+        [curr | rest] = history
+        {x, cycle} = curr
+        offset_cycle = rem(cycle - 1, 40)
+        diff = abs(x - offset_cycle)
+
+        case offset_cycle do
+          0 ->
+            IO.puts(curr_str)
+            curr_str = ""
+
+            cond do
+              diff <= 1 ->
+                render(rest, curr_str <> "#")
+
+              true ->
+                render(rest, curr_str <> ".")
+            end
+
+          _ ->
+            cond do
+              diff <= 1 ->
+                render(rest, curr_str <> "#")
+
+              true ->
+                render(rest, curr_str <> ".")
+            end
         end
     end
   end
