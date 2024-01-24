@@ -25,10 +25,10 @@ defmodule Day10 do
     |> Enum.sum()
   end
 
-  defp simulation(instructions, x \\ 1, cycle \\ 1, signal_str_sum \\ []) do
+  defp simulation(instructions, x \\ 1, cycle \\ 1, signal_strs \\ []) do
     case instructions do
       [] ->
-        signal_str_sum
+        signal_strs
 
       _ ->
         [curr_instruction | rest] = instructions
@@ -37,10 +37,10 @@ defmodule Day10 do
           1 ->
             case MapSet.member?(@targets, cycle + 1) do
               false ->
-                simulation(rest, x, cycle + 1, signal_str_sum)
+                simulation(rest, x, cycle + 1, signal_strs)
 
               true ->
-                simulation(rest, x, cycle + 1, [x * (cycle + 1) | signal_str_sum])
+                simulation(rest, x, cycle + 1, [x * (cycle + 1) | signal_strs])
             end
 
           2 ->
@@ -48,13 +48,13 @@ defmodule Day10 do
 
             cond do
               MapSet.member?(@targets, cycle + 1) ->
-                simulation(rest, x + val, cycle + 2, [x * (cycle + 1) | signal_str_sum])
+                simulation(rest, x + val, cycle + 2, [x * (cycle + 1) | signal_strs])
 
               MapSet.member?(@targets, cycle + 2) ->
-                simulation(rest, x + val, cycle + 2, [(x + val) * (cycle + 2) | signal_str_sum])
+                simulation(rest, x + val, cycle + 2, [(x + val) * (cycle + 2) | signal_strs])
 
               true ->
-                simulation(rest, x + val, cycle + 2, signal_str_sum)
+                simulation(rest, x + val, cycle + 2, signal_strs)
             end
         end
     end
