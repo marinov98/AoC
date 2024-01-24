@@ -16,8 +16,7 @@ defmodule Day10 do
       |> String.split("\n", trim: true)
       |> Enum.map(&String.split/1)
 
-    # part2(input)}
-    {part1(input), 0}
+    {part1(input), :not_implemented} #part2(input)}
   end
 
   def part1(input) do
@@ -26,13 +25,11 @@ defmodule Day10 do
 
     # alternative method
     # |> simulation_alt
-    # |> Enum.reverse()
     # |> Enum.drop(20)
     # |> Enum.take_every(40)
-    # |> Enum.reduce({0, 20}, fn elem, {sum, cycle} ->
-    #   {sum + elem * cycle, cycle + 40}
+    # |> Enum.reduce(0, fn {elem, cycle}, sum ->
+    #   sum + elem * cycle
     # end)
-    # |> elem(0)
   end
 
   defp simulation(instructions, x \\ 1, cycle \\ 1, signal_strs_sum \\ 0) do
@@ -75,22 +72,26 @@ defmodule Day10 do
     |> simulation_alt
   end
 
-  defp simulation_alt(instructions, x \\ 1, history \\ [1]) do
-    case instructions do
-      [] ->
-        history
+  defp simulation_alt(instructions, x \\ 1, history \\ [{1, 0}]) do
+    case Enum.empty?(instructions) do
+      true ->
+        cycle = history |> hd |> elem(1)
+        Enum.reverse([{x, cycle + 1} | history])
 
-      _ ->
+      false ->
         [curr_instruction | rest] = instructions
 
         case length(curr_instruction) do
           1 ->
-            simulation_alt(rest, x, [x | history])
+            cycle = history |> hd |> elem(1)
+            simulation_alt(rest, x, [{x, cycle + 1} | history])
 
           2 ->
             val = curr_instruction |> List.last() |> String.to_integer()
-            history = [x | history]
-            history = [x | history]
+            cycle = history |> hd |> elem(1)
+
+            history = [{x, cycle + 1} | history]
+            history = [{x, cycle + 2} | history]
             simulation_alt(rest, x + val, history)
         end
     end
