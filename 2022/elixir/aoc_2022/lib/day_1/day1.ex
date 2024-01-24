@@ -11,13 +11,6 @@ defmodule Day1 do
       input_file
       |> File.read!()
       |> String.split("\n\n")
-      |> Enum.map(fn curr_str ->
-        curr_str
-        |> String.trim()
-        |> String.split("\n")
-        |> Enum.map(&String.to_integer/1)
-        |> Enum.sum()
-      end)
 
     {{"Part 1 using '#{input_file}'", part1(input)},
      {"Part 2 using '#{input_file}'", part2(input)}}
@@ -25,7 +18,13 @@ defmodule Day1 do
 
   def part1(input) do
     input
-    |> Enum.reduce(&max/2)
+    |> Enum.reduce(0, fn elem, acc ->
+      elem
+      |> String.split("\n", trim: true)
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.sum()
+      |> max(acc)
+    end)
   end
 
   def part2(input) do
@@ -34,7 +33,13 @@ defmodule Day1 do
     #    |> Enum.sort(&(&1 >= &2))
     #    |> Enum.take(3)
     #    |> Enum.sum
-    |> Enum.reduce({0, 0, 0}, fn cals, acc ->
+    |> Enum.reduce({0, 0, 0}, fn elem, acc ->
+      cals =
+        elem
+        |> String.split("\n", trim: true)
+        |> Enum.map(&String.to_integer/1)
+        |> Enum.sum()
+
       cond do
         cals > elem(acc, 0) -> {cals, elem(acc, 0), elem(acc, 1)}
         cals > elem(acc, 1) -> {elem(acc, 0), cals, elem(acc, 1)}
