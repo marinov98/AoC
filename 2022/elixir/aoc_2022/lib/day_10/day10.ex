@@ -14,21 +14,31 @@ defmodule Day10 do
       input_file
       |> File.read!()
       |> String.split("\n", trim: true)
+      |> Enum.map(&String.split/1)
 
+    # part2(input)}
     {part1(input), 0}
   end
 
   def part1(input) do
     input
-    |> Enum.map(&String.split/1)
     |> simulation
-    |> Enum.sum()
+
+    # alternative method
+    # |> simulation_alt
+    # |> Enum.reverse()
+    # |> Enum.drop(20)
+    # |> Enum.take_every(40)
+    # |> Enum.reduce({0, 20}, fn elem, {sum, cycle} ->
+    #   {sum + elem * cycle, cycle + 40}
+    # end)
+    # |> elem(0)
   end
 
-  defp simulation(instructions, x \\ 1, cycle \\ 1, signal_strs \\ []) do
+  defp simulation(instructions, x \\ 1, cycle \\ 1, signal_strs_sum \\ 0) do
     case instructions do
       [] ->
-        signal_strs
+        signal_strs_sum
 
       _ ->
         [curr_instruction | rest] = instructions
@@ -37,10 +47,10 @@ defmodule Day10 do
           1 ->
             case MapSet.member?(@targets, cycle + 1) do
               false ->
-                simulation(rest, x, cycle + 1, signal_strs)
+                simulation(rest, x, cycle + 1, signal_strs_sum)
 
               true ->
-                simulation(rest, x, cycle + 1, [x * (cycle + 1) | signal_strs])
+                simulation(rest, x, cycle + 1, x * (cycle + 1) + signal_strs_sum)
             end
 
           2 ->
@@ -48,14 +58,40 @@ defmodule Day10 do
 
             cond do
               MapSet.member?(@targets, cycle + 1) ->
-                simulation(rest, x + val, cycle + 2, [x * (cycle + 1) | signal_strs])
+                simulation(rest, x + val, cycle + 2, x * (cycle + 1) + signal_strs_sum)
 
               MapSet.member?(@targets, cycle + 2) ->
-                simulation(rest, x + val, cycle + 2, [(x + val) * (cycle + 2) | signal_strs])
+                simulation(rest, x + val, cycle + 2, (x + val) * (cycle + 2) + signal_strs_sum)
 
               true ->
-                simulation(rest, x + val, cycle + 2, signal_strs)
+                simulation(rest, x + val, cycle + 2, signal_strs_sum)
             end
+        end
+    end
+  end
+
+  def part2(input) do
+    input
+    |> simulation_alt
+  end
+
+  defp simulation_alt(instructions, x \\ 1, history \\ [1]) do
+    case instructions do
+      [] ->
+        history
+
+      _ ->
+        [curr_instruction | rest] = instructions
+
+        case length(curr_instruction) do
+          1 ->
+            simulation_alt(rest, x, [x | history])
+
+          2 ->
+            val = curr_instruction |> List.last() |> String.to_integer()
+            history = [x | history]
+            history = [x | history]
+            simulation_alt(rest, x + val, history)
         end
     end
   end
