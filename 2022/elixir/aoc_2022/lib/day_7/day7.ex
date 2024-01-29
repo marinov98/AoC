@@ -35,79 +35,116 @@ defmodule Day7 do
          curr_dir \\ "",
          size_tracker \\ %{},
          file_name_tracker \\ %{}
+       )
+
+  defp part1_utility(
+         input,
+         _curr_line,
+         _path,
+         _curr_dir,
+         size_tracker,
+         _file_name_tracker
+       )
+       when length(input) == 0,
+       do: size_tracker
+
+  defp part1_utility(
+         input,
+         curr_line,
+         path,
+         curr_dir,
+         size_tracker,
+         file_name_tracker
        ) do
-    case input do
-      [] ->
-        size_tracker
+    split = String.split(curr_line, " ")
+    [_ | next_lines] = input
 
-      _ ->
-        split = String.split(curr_line, " ")
-        [_ | next_lines] = input
+    case hd(split) do
+      # command
+      "$" ->
+        [_ | rest] = split
 
-        case hd(split) do
-          # command
-          "$" ->
-            [_ | rest] = split
+        case List.first(rest) do
+          # going into new directory
+          "cd" ->
+            next_dir = List.last(rest)
 
-            case List.first(rest) do
-              # going into new directory
-              "cd" ->
-                next_dir = List.last(rest)
+            case curr_dir do
+              # should be first command
+              "" ->
+                path = [next_dir]
+                size_tracker = Map.put(size_tracker, Enum.join(path), 0)
 
-                case curr_dir do
-                  # should be first command
-                  "" ->
-                    path = [next_dir]
-                    size_tracker = Map.put(size_tracker, Enum.join(path), 0)
+                part1_utility(
+                  next_lines,
+                  List.first(next_lines),
+                  path,
+                  next_dir,
+                  size_tracker,
+                  file_name_tracker
+                )
+
+              _ ->
+                case next_dir do
+                  ".." ->
+                    [prev_dir | remaining_path] = path
 
                     part1_utility(
                       next_lines,
                       List.first(next_lines),
-                      path,
-                      next_dir,
+                      remaining_path,
+                      prev_dir,
                       size_tracker,
                       file_name_tracker
                     )
 
                   _ ->
-                    case next_dir do
-                      ".." ->
-                        [prev_dir | remaining_path] = path
-
-                        part1_utility(
-                          next_lines,
-                          List.first(next_lines),
-                          remaining_path,
-                          prev_dir,
-                          size_tracker,
-                          file_name_tracker
-                        )
-
-                      _ ->
-                        part1_utility(
-                          next_lines,
-                          List.first(next_lines),
-                          [next_dir | path],
-                          next_dir,
-                          size_tracker,
-                          file_name_tracker
-                        )
-                    end
+                    part1_utility(
+                      next_lines,
+                      List.first(next_lines),
+                      [next_dir | path],
+                      next_dir,
+                      size_tracker,
+                      file_name_tracker
+                    )
                 end
-
-              "ls" ->
-                part1_utility(
-                  next_lines,
-                  List.first(next_lines),
-                  path,
-                  curr_dir,
-                  size_tracker,
-                  file_name_tracker
-                )
             end
 
-          # dir
-          "dir" ->
+          "ls" ->
+            part1_utility(
+              next_lines,
+              List.first(next_lines),
+              path,
+              curr_dir,
+              size_tracker,
+              file_name_tracker
+            )
+        end
+
+      # dir
+      "dir" ->
+        part1_utility(
+          next_lines,
+          List.first(next_lines),
+          path,
+          curr_dir,
+          size_tracker,
+          file_name_tracker
+        )
+
+      # size
+      _ ->
+        file_name = List.last(split)
+        curr_files = Map.get(file_name_tracker, Enum.join(path), MapSet.new())
+
+        case MapSet.member?(curr_files, file_name) do
+          false ->
+            val = String.to_integer(List.first(split))
+            curr_files = MapSet.put(curr_files, file_name)
+            file_name_tracker = Map.put(file_name_tracker, Enum.join(path), curr_files)
+            size_tracker = Map.update(size_tracker, Enum.join(path), val, &(&1 + val))
+            size_tracker = update_parents(path, size_tracker, val)
+
             part1_utility(
               next_lines,
               List.first(next_lines),
@@ -117,38 +154,15 @@ defmodule Day7 do
               file_name_tracker
             )
 
-          # size
-          _ ->
-            file_name = List.last(split)
-            curr_files = Map.get(file_name_tracker, Enum.join(path), MapSet.new())
-
-            case MapSet.member?(curr_files, file_name) do
-              false ->
-                val = String.to_integer(List.first(split))
-                curr_files = MapSet.put(curr_files, file_name)
-                file_name_tracker = Map.put(file_name_tracker, Enum.join(path), curr_files)
-                size_tracker = Map.update(size_tracker, Enum.join(path), val, &(&1 + val))
-                size_tracker = update_parents(path, size_tracker, val)
-
-                part1_utility(
-                  next_lines,
-                  List.first(next_lines),
-                  path,
-                  curr_dir,
-                  size_tracker,
-                  file_name_tracker
-                )
-
-              true ->
-                part1_utility(
-                  next_lines,
-                  List.first(next_lines),
-                  path,
-                  curr_dir,
-                  size_tracker,
-                  file_name_tracker
-                )
-            end
+          true ->
+            part1_utility(
+              next_lines,
+              List.first(next_lines),
+              path,
+              curr_dir,
+              size_tracker,
+              file_name_tracker
+            )
         end
     end
   end

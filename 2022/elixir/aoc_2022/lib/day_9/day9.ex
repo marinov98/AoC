@@ -130,22 +130,34 @@ defmodule Day9 do
         h_c \\ 0,
         tail \\ [{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}],
         tracker \\ MapSet.new()
+      )
+
+  def part2(
+        input,
+        _h_r,
+        _h_c,
+        _tail,
+        tracker
+      )
+      when length(input) == 0,
+      do: MapSet.size(tracker)
+
+  def part2(
+        input,
+        h_r,
+        h_c,
+        tail,
+        tracker
       ) do
-    case Enum.empty?(input) do
-      true ->
-        tracker |> MapSet.size()
+    [curr | rest] = input
+    curr_dir_split = String.split(curr, " ")
+    curr_dir = curr_dir_split |> hd
+    curr_moves = curr_dir_split |> List.last() |> String.to_integer()
 
-      false ->
-        [curr | rest] = input
-        curr_dir_split = String.split(curr, " ")
-        curr_dir = curr_dir_split |> hd
-        curr_moves = curr_dir_split |> List.last() |> String.to_integer()
+    {h_r, h_c, tail, tracker} =
+      simulation_helper2(curr_dir, curr_moves, h_r, h_c, tail, tracker)
 
-        {h_r, h_c, tail, tracker} =
-          simulation_helper2(curr_dir, curr_moves, h_r, h_c, tail, tracker)
-
-        part2(rest, h_r, h_c, tail, tracker)
-    end
+    part2(rest, h_r, h_c, tail, tracker)
   end
 
   defp simulation_helper2(dir, moves, h_r, h_c, tail, tracker) do
