@@ -18,7 +18,7 @@ defmodule Day7 do
 
   def part1(input) do
     input
-    |> part1_utility(List.first(input))
+    |> part1_utility()
     |> Enum.flat_map(fn {_, v} ->
       case v < 100_001 do
         true -> [v]
@@ -30,7 +30,6 @@ defmodule Day7 do
 
   defp part1_utility(
          input,
-         curr_line,
          path \\ [],
          curr_dir \\ "",
          size_tracker \\ %{},
@@ -39,7 +38,6 @@ defmodule Day7 do
 
   defp part1_utility(
          input,
-         _curr_line,
          _path,
          _curr_dir,
          size_tracker,
@@ -50,14 +48,13 @@ defmodule Day7 do
 
   defp part1_utility(
          input,
-         curr_line,
          path,
          curr_dir,
          size_tracker,
          file_name_tracker
        ) do
+    [curr_line | next_lines] = input
     split = String.split(curr_line, " ")
-    [_ | next_lines] = input
 
     case hd(split) do
       # command
@@ -77,7 +74,6 @@ defmodule Day7 do
 
                 part1_utility(
                   next_lines,
-                  List.first(next_lines),
                   path,
                   next_dir,
                   size_tracker,
@@ -91,7 +87,6 @@ defmodule Day7 do
 
                     part1_utility(
                       next_lines,
-                      List.first(next_lines),
                       remaining_path,
                       prev_dir,
                       size_tracker,
@@ -101,7 +96,6 @@ defmodule Day7 do
                   _ ->
                     part1_utility(
                       next_lines,
-                      List.first(next_lines),
                       [next_dir | path],
                       next_dir,
                       size_tracker,
@@ -113,7 +107,6 @@ defmodule Day7 do
           "ls" ->
             part1_utility(
               next_lines,
-              List.first(next_lines),
               path,
               curr_dir,
               size_tracker,
@@ -125,7 +118,6 @@ defmodule Day7 do
       "dir" ->
         part1_utility(
           next_lines,
-          List.first(next_lines),
           path,
           curr_dir,
           size_tracker,
@@ -147,7 +139,6 @@ defmodule Day7 do
 
             part1_utility(
               next_lines,
-              List.first(next_lines),
               path,
               curr_dir,
               size_tracker,
@@ -157,7 +148,6 @@ defmodule Day7 do
           true ->
             part1_utility(
               next_lines,
-              List.first(next_lines),
               path,
               curr_dir,
               size_tracker,
@@ -182,7 +172,7 @@ defmodule Day7 do
 
   def part2(input) do
     input
-    |> part1_utility(List.first(input))
+    |> part1_utility()
     |> part2_utility()
   end
 
