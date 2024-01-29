@@ -96,9 +96,7 @@ defmodule Day3 do
   end
 
   defp part2_utility(triplets) do
-    [first | middle] = triplets
-    second = List.first(middle)
-    third = List.last(middle)
+    [first | [second, third]] = triplets
 
     first_map =
       first
@@ -127,6 +125,7 @@ defmodule Day3 do
     # just testing out flat map reduce (flat map |> sum seems more elegant)
     |> Enum.flat_map_reduce(0, &{[], &2 + List.first(MapSet.to_list(&1))})
     |> elem(1)
+
     # different variant
     # |> Enum.flat_map(& &1)
     # |> Enum.sum()
