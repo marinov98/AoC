@@ -19,7 +19,8 @@ fn part2(input: &String) -> i64 {
             max3 = sum;
         }
     }
-    return max1 + max2 + max3;
+
+    max1 + max2 + max3
 }
 
 fn part1(input: &String) -> i64 {
