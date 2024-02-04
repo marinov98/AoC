@@ -1,9 +1,9 @@
 const INPUTS: [&str; 2] = ["./inputs/1.test", "./inputs/1.input"];
 
-fn part2(input: &String) -> i64 {
+fn part2(input: &String) -> u64 {
     let sums = input
         .split("\n\n")
-        .map(|e| e.lines().map(|n| n.parse::<i64>().unwrap()).sum::<i64>());
+        .map(|e| e.lines().map(|n| n.parse::<u64>().unwrap()).sum::<u64>());
     let mut max1 = 0;
     let mut max2 = 0;
     let mut max3 = 0;
@@ -23,16 +23,16 @@ fn part2(input: &String) -> i64 {
     max1 + max2 + max3
 }
 
-fn part1(input: &String) -> i64 {
+fn part1(input: &String) -> u64 {
     input.split("\n\n").fold(0, |acc, e| {
         std::cmp::max(
-            e.lines().map(|n| n.parse::<i64>().unwrap()).sum::<i64>(),
+            e.lines().map(|n| n.parse::<u64>().unwrap()).sum::<u64>(),
             acc,
         )
     })
 }
 
-fn solution_helper(input_file: &'static str) -> (i64, i64) {
+fn solution_helper(input_file: &'static str) -> (u64, u64) {
     let input = std::fs::read_to_string(input_file).expect("Unable to open file!");
 
     (part1(&input), part2(&input))
